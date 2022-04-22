@@ -6,7 +6,7 @@
    III. Dynamic Routes
    IV.  Nested Dynamic Routes
    V.   Catch-all Routes
-   VI.  Navigate from the UI
+   VI.  Link Component Navigation
    VII. Programmatically navigate b/w Pages
 
 ===============================
@@ -52,7 +52,7 @@ package.json => this is important file where all 'dependencies'
    III. Dynamic Routes
    IV.  Nested Dynamic Routes
    V.   Catch-all Routes
-   VI.  Navigate from the UI
+   VI.  Link Component Navigation
    VII. Programmatically navigate b/w Pages
 ===============================
 I.   Route with Pages
@@ -327,6 +327,16 @@ http://localhost:3000/product/1
 http://localhost:3000/product/100
 http://localhost:3000/product/sweater
 http://localhost:3000/product/jacket
+
+NOTE:
+If we take [productId].js 
+then
+const productId = router.query.productId
+
+If we take [id].js 
+then
+const productId = router.query.id
+
 ------------
 
 PART - IV
@@ -462,6 +472,318 @@ export default Review;
 -----------
 http://localhost:3000/product/500/review/500
 http://localhost:3000/product/100/review/5
+-----------
+
+Example:2
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+         - []review
+            - [reviewId].js
+   
+  - []post
+     - index.js
+     - [postId]
+       - index.js
+       - []comment
+          - [commentId].js
+
+-----------
+CODE OF
+- []post
+  - index.js
+-----------
+
+function Post(){
+    return(
+        <div>
+            <h1>Post List</h1>
+        </div>
+    )
+}
+
+export default Post;
+
+-----------
+CODE OF
+- [postId]
+   - index.js
+-----------
+
+import {useRouter} from 'next/router'
+
+function SinglePost(){
+    const router = useRouter();
+    const routerId = router.query.postId
+    return(
+        <div>
+            <h1>Single Post {routerId}</h1>
+        </div>
+    )
+}
+
+export default SinglePost;
+
+-----------
+CODE OF
+- []comment
+  - [commentId].js
+-----------
+
+import {useRouter} from 'next/router'
+
+function SinglePostComment(){
+    const router = useRouter();
+    const  {postId, commentId}= router.query
+    return(
+        <div>
+            <h1>Comment Id {commentId} for the Post {postId} </h1>
+        </div>
+    )
+}
+
+export default SinglePostComment;
+
+-----------
+http://localhost:3000/post/500/comment/100
+http://localhost:3000/post/120/comment/new
+
+
+===============================
+VI.  Link Component Navigation
+===============================
+In next application we use Link component to navigate 
+to other pages.
+To do that we import:
+-----------
+import Link from 'next/link'
+-----------
+PART - I
+Let we are Link Blog and Product page form Home page
+index.js
+CODE
+-----------
+
+import Link from 'next/link'
+
+function Home(){
+    return(
+        <div>
+            <h1>Home Page</h1>
+            <Link href='/blog'>
+             <a>Blog</a>
+            </Link>
+            <Link href='/product'>
+            <a>Product</a>
+            </Link>
+        </div>
+    )
+}
+export default Home;
+
+-----------
+PART - II
+Similarly we go back to our Home page (root page).
+Example:from Product page to Home page
+
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList(){
+    return(
+        <div>
+            <h1>Product 1</h1>
+            <h1>Product 2</h1>
+            <h1>Product 3</h1>
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+PART - III
+Navigate to dymanic Routes
+
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList(){
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+            <Link href='/product/3'>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+PART - IV
+Everytime we don't have freedom to write 
+hard code for the dymanic Rought like previous one.
+The product id my be passed via props to the Component.
+
+Right now we don't have any props but 
+Let assume the props have exists and let assign a default value 100
+-----------
+CODE OF
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList({productId = 100}){   //Here we assing 
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+            <Link href='/product/3'>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+
+            <Link href={`/product/${productId}`}>   
+             <a><h1>Product {productId}</h1></a>
+            </Link>
+
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+NOTE:
+'replace' is use as Back Button behaviour to the Home page from browser
+back arrow button.
+-----------
+CODE OF
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList({productId = 100}){  
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+
+
+            <Link href='/product/3' replace>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+
+            <Link href={`/product/${productId}`}>   
+             <a><h1>Product {productId}</h1></a>
+            </Link>
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+        </div>
+    )
+}
+
+export default ProductList;
+
+
+===============================
+VII. Programmatically navigate b/w Pages
+===============================
+In this case we learn after summit any button, it Programmatically navigate
+to the another page. For example in Amazone after summit a form successfully it
+navigated to the order conformaton page.
+
+Here let assume we have a Place Order button, after click, it will navigated 
+to the product list page.
+
+-----------
+[]pages
+  - _app.js
+  - index.js
+-----------
+
+import Link from 'next/link'
+import {useRouter} from 'next/router'
+
+function Home(){
+    const router = useRouter()
+    const handleClick = () =>{
+        console.log('Placing your order')
+        router.push('/product')
+    }
+
+    return(
+        <div>
+            <h1>Home Page</h1>
+            <Link href='/blog'>
+             <a>Blog</a>
+            </Link>
+            <Link href='/product'>
+            <a>Product</a>
+            </Link>
+            <button onClick={handleClick}>
+                Order Now
+            </button>
+        </div>
+    )
+}
+export default Home;
+
+-----------
+i.   On click button handelClick function called which is defined.
+ii.  To route another page we import {useRouter}
 
 
 
