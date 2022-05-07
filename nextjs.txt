@@ -8,6 +8,13 @@
    V.   Catch-all Routes
    VI.  Link Component Navigation
    VII. Programmatically navigate b/w Pages
+   VIII.Custom 404 page
+4. About Pre-rendering
+5. Pre-rendering
+   I.  Static Generation
+   II. Server-side Rendering
+6. Data Fetching
+7. Pages with Components
 
 ===============================
 1. Creating new proje
@@ -54,6 +61,7 @@ package.json => this is important file where all 'dependencies'
    V.   Catch-all Routes
    VI.  Link Component Navigation
    VII. Programmatically navigate b/w Pages
+   VIII.Custom 404 page
 ===============================
 I.   Route with Pages
 ===============================
@@ -786,13 +794,204 @@ i.   On click button handelClick function called which is defined.
 ii.  To route another page we import {useRouter}
 
 
+===============================
+VIII.Custom 404 page
+===============================
+In next.js application by default have 404 page, But we can also
+generate our custom 404 page by creating '404.js' page under []page folder.
+
+404.js
+-----------
+
+function PageNotFound(){
+    return(
+        <h1>404 Page</h1>
+    )
+}
+export default PageNotFound;
 
 
+===============================
+4. About Pre-rendering
+===============================
+Next Js generates HTML for each page in advance insted of having
+it all done by client-side JavaScript.
+Pre-rendering is done by default in a Next JS app.
+
+Why Pre-rendering Important:
+----------------------------
+I.  Pre-rendering imporves performance. In React App, we need to wait for the
+    JavaScript to be executed but in Next JS with pre-rendering, the HTML is 
+    already generated ans loads faster.
+
+II. Pre-rendering helps with SEO. In React App have only div tag with id="root"
+    but in Next JS have present proper source code which help index that page for SEO.
+    
 
 
+===============================
+5. Pre-rendering
+   I.  Static Generation
+   II. Server-side Rendering
+===============================
+Next JS supports tow forms of pre-rendering
+I.  Static Generation
+II. Server-side Rendering
 
 
+===============================
+6. Data Fetching
+===============================
+Part - I
+users.js
+-----------
+function UserList(){
+  return(
+      <div>
+      <h1>List of Users</h1>
+      </div>
+  )
+}
+
+export default UserList
+
+-----------
+Part - II
+feaching data from dummy json and passes through
+props. Here that props is users
+users.js
+-----------
+
+function UserList({users}){
+  return(
+      <div>
+      <h1>List of Users</h1>
+        {
+          users.map(user =>{
+              return(
+                  <div key={user.id}>
+                      <p>{user.name}</p>
+                      <p>{user.email}</p>
+                  </div>
+                )
+              }
+           )
+        }
+      </div>
+  )
+}
+
+export default UserList
+
+export async function getStaticProps(){
+    const resonse = await fetch('https://jsonplaceholder.typicode.com/users')
+    const data = await resonse.json()
+    console.log(data)
+
+    return{
+        props:{
+            users:data
+        }
+    }
+}
 
 
+===============================
+7. Pages with Components
+===============================
+In the above code we can add external component.
+Here we add a compnent for user details.
 
+-----------
+PART - I
+-----------
+under the Project Root folder we create a new folde called []components.
+under this []components folder create new file called user.js
+-----------
 
+[]components
+  - user.js
+
+- users.js
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+         - []review
+            - [reviewId].js
+   
+  - []post
+     - index.js
+     - [postId]
+       - index.js
+       - []comment
+          - [commentId].js
+
+   
+-----------
+Code of
+[]components
+  - user.js
+-----------
+
+function User({user}){
+    return(
+        <div>
+            <p>{user.name}</p>
+            <p>{user.email}</p>
+        </div>
+    )
+}
+
+export default User;
+
+-----------
+Code of
+- users.js
+-----------
+
+import User from '../components/user'
+
+function UserList({users}){
+  return(
+      <div>
+      <h1>List of Users</h1>
+        {
+          users.map(user  =>{
+              return(
+                  <div key={user.id}>
+                      <User user={user} />
+                  </div>
+                )
+              }
+           )
+        }
+      </div>
+  )
+}
+
+export default UserList
+
+export async function getStaticProps(){
+    const resonse = await fetch('https://jsonplaceholder.typicode.com/users')
+    const data = await resonse.json()
+    console.log(data)
+
+    return{
+        props:{
+            users:data
+        }
+    }
+}
+
+-----------
