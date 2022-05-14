@@ -36,6 +36,13 @@ yarn dev
 III. Open project at
 http://localhost:3000/
 
+*** Note ***
+1. During Development we will use 'yarn dev'
+   we can edit our project during development mode.
+2. For Productin we have to delete [].next folder (video: 20)
+   and run 'yarn build' to build the project for Production.
+3. To run this build project on system then run 'yarn start'.
+   In this build project we can not edit our project.
 
 
 ===============================
