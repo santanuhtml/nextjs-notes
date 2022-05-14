@@ -11,7 +11,7 @@
    VIII.Custom 404 page
 4. About Pre-rendering
 5. Pre-rendering
-   I.  Static Generation
+   I.  Static Site Generation
    II. Server-side Rendering
 6. Data Fetching
 7. Pages with Components
@@ -838,16 +838,16 @@ II. Pre-rendering helps with SEO. In React App have only div tag with id="root"
 
 ===============================
 5. Pre-rendering
-   I.  Static Generation
+   I.  Static Site Generation
    II. Server-side Rendering
 ===============================
 Next JS supports tow forms of pre-rendering
-I.  Static Generation:
+I.  Static Site Generation:
 
-    i. Static Generation is a method of pre-rendering where
+    i. Static Site Generation is a method of pre-rendering where
        the HTML pages are generated at build time
 
-    ii. Static Generation can be done with and without external data
+    ii. Static Site Generation can be done with and without external data
 
     iii. To use external data have to use 'getStaticProps' function
 
@@ -857,7 +857,7 @@ I.  Static Generation:
        is created client side using the JavaScript and JSON prefetched form the 
        server. No additional request to the server.
 
-*** Example of Static Generation with external data  ***
+*** Example of Static Site Generation with external data  ***
     To do that we Fetch dummy JSON data
 ===============================
 6. Data Fetching
