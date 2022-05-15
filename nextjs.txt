@@ -1021,7 +1021,7 @@ export async function getStaticProps(){
 8. Data Fetching For Post List
 ===============================
 *** Example:2 of Static Site Generation (Pre-rendering) with external data  ***
-
+CREATING POST LIST
 creating new folder called []posts under []pages folder
 after this create index.js file under []posts
 
