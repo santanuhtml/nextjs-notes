@@ -15,6 +15,7 @@
    II. Server-side Rendering
 6. Data Fetching
 7. Pages with Components
+8. Data Fetching For Post List
 
 ===============================
 1. Creating new proje
@@ -857,7 +858,7 @@ I.  Static Site Generation:
        is created client side using the JavaScript and JSON prefetched form the 
        server. No additional request to the server.
 
-*** Example of Static Site Generation with external data  ***
+*** Example:1 of Static Site Generation (Pre-rendering) with external data  ***
     To do that we Fetch dummy JSON data
 ===============================
 6. Data Fetching
@@ -1015,3 +1016,27 @@ export async function getStaticProps(){
 }
 
 -----------
+
+===============================
+8. Data Fetching For Post List
+===============================
+*** Example:2 of Static Site Generation (Pre-rendering) with external data  ***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
