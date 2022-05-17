@@ -1030,7 +1030,7 @@ after this create index.js file under []posts
      - index.js
   
 CODE
------------- 
+-------------------------------
 function PostList({posts}){
     return(
         <div>
@@ -1062,7 +1062,7 @@ export async function getStaticProps(){
     }
 }
 
------------- 
+-------------------------------
 Note:
 step 1
 In first step create function PostList()
@@ -1135,8 +1135,8 @@ Now in Post list we need to add Link to get Post Details:
   - []posts
      - index.js
   
-CODE on index.js
------------- 
+FULL CODE OF POST LIST PAGE on index.js
+-------------------------------
 import Link from 'next/link'
 
 function PostList({posts}){
@@ -1172,7 +1172,7 @@ export async function getStaticProps(){
     }
 }
 
------------- 
+------------------------------- 
 
 GET POST DETAILS
 Now create a file called [postId].js under []posts
@@ -1182,8 +1182,8 @@ Now create a file called [postId].js under []posts
      - index.js
      - [postId].js
 
-CODE OF [postId].js
-------------
+FULL CODE OF [postId].js
+-------------------------------
 
 function Post({post}){
     return(
@@ -1227,7 +1227,7 @@ export async function getStaticProps(context){
     }
 }
 
-------------
+-------------------------------
 Note:
 step 1:
 Creating Post details Function component:
