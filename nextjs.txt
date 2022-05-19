@@ -15,7 +15,8 @@
    II. Server-side Rendering
 6. Data Fetching
 7. Pages with Components
-8. Data Fetching For Post List
+8. Fetching Data For Post List
+9. Fetching All Data For Post List
 
 ===============================
 1. Creating new proje
@@ -1018,7 +1019,7 @@ export async function getStaticProps(){
 -----------
 
 ===============================
-8. Data Fetching For Post List
+8. Fetching Data For Post List
 ===============================
 *** Example:2 of Static Site Generation (Pre-rendering) with external data  ***
 CREATING POST LIST
@@ -1136,7 +1137,7 @@ Now in Post list we need to add Link to get Post Details:
      - index.js
   
 FULL CODE OF POST LIST PAGE on index.js
--------------------------------
+=================================
 import Link from 'next/link'
 
 function PostList({posts}){
@@ -1172,7 +1173,7 @@ export async function getStaticProps(){
     }
 }
 
-------------------------------- 
+================================= 
 
 GET POST DETAILS
 Now create a file called [postId].js under []posts
@@ -1183,7 +1184,7 @@ Now create a file called [postId].js under []posts
      - [postId].js
 
 FULL CODE OF [postId].js
--------------------------------
+=================================
 
 function Post({post}){
     return(
@@ -1227,7 +1228,7 @@ export async function getStaticProps(context){
     }
 }
 
--------------------------------
+=================================
 Note:
 step 1:
 Creating Post details Function component:
@@ -1310,6 +1311,14 @@ export async function getStaticPaths(){
     }
 }
 -----
+
+===============================
+9. Fetching All Data For Post List
+===============================
+Just Before we Fetch only 3 data for Static Site Generation (Pre-rendering) using
+data.slice(0,3) and we create 3 paths by coding.
+
+Now we will Fetching All Data Dynamically.
 
 
 
