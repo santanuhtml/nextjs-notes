@@ -1483,7 +1483,13 @@ getStaticPaths fallback:false
                         localhost:3000/posts/3
 			localhost:3000/posts/4 - this return 404 error
                         
-                        
+WHEN TO USE:
+------------
+1. It is most usefull if we have an application with small number 
+of paths to pre-render and new pages are not added often.
+
+2. ** A blog site with few articles is a good example for fallback:false
+   which help faster load time and SEO                    
                         
                         
 
