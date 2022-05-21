@@ -1473,7 +1473,8 @@ getStaticPaths fallback:false
 -----------------------------
 1. The paths returnded from getStaticPaths will be rendered to HTML
    at build time by getStaticProps
-   =>Simply we pre-render all HTML pages at build time
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
 
 2. If fallback is set to false, then any paths not returned by getStaticPaths will
    result in a 404 page
