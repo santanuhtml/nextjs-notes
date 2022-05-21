@@ -17,6 +17,7 @@
 7. Pages with Components
 8. Fetching Data For Post List
 9. Fetching All Data For Post List
+10. getStaticPaths fallback
 
 ===============================
 1. Creating new proje
@@ -1459,4 +1460,33 @@ const paths = data.map(post =>{
         fallback: false,
     }
 ----------
+
+===============================
+10. getStaticPaths fallback
+===============================
+
+we return fallback key for getStaticPaths() and it is mandatary.
+fallback has three possibal valules
+fallback:false|true|bloking
+
+getStaticPaths fallback:false
+-----------------------------
+1. The paths returnded from getStaticPaths will be rendered to HTML
+   at build time by getStaticProps
+   =>Simply we pre-render all HTML pages at build time
+
+2. If fallback is set to false, then any paths not returned by getStaticPaths will
+   result in a 404 page
+   => if we pre-render only 3 pages then we can print those 3 pages directly
+      via link example: localhost:3000/posts/1
+                        localhost:3000/posts/2
+                        localhost:3000/posts/3
+			               localhost:3000/posts/4 - this return 404 error
+                        
+                        
+                        
+                        
+
+
+
 
