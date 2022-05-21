@@ -1291,7 +1291,7 @@ export default Post;
 -----
 
 step 5:
-Using 'getStaticPaths' we can set number of HTML page that will be pre-render.
+Using 'getStaticPaths' we can create/generate static HTML pages that will be pre-render.
 Here we take 3 post list so we will pre-render 3 HTML details pages also
 -----
 export async function getStaticPaths(){
