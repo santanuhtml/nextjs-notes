@@ -1481,7 +1481,7 @@ getStaticPaths fallback:false
       via link example: localhost:3000/posts/1
                         localhost:3000/posts/2
                         localhost:3000/posts/3
-			               localhost:3000/posts/4 - this return 404 error
+			localhost:3000/posts/4 - this return 404 error
                         
                         
                         
