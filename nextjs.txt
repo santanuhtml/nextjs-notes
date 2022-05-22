@@ -1492,6 +1492,44 @@ of paths to pre-render and new pages are not added often.
 2. ** A blog site with few articles is a good example for fallback:false
    which help faster load time and SEO                    
                         
+-----------------------------
+getStaticPaths fallback:true
+-----------------------------
+1. The paths returnded from getStaticPaths will be rendered to HTML
+   at build time by getStaticProps
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
+
+2. The paths that have not been generated at build time will not result in a
+   404 page. Instead, Next.js will serve a "fallback" version of the page on 
+   the firest request to sucha a path.
+   => Simply it will not give 404 page error like getStaticPaths fallback:false
+      It will display "fallback" version of the page, after Loding it will 
+      display the page.
+      Here the fallback version is
+      ----------------------------
+      if(router.isFallback){
+        return <h1>Loding...</h1>
+      }
+      ----------------------------
+      
+3. In the background, Next.js will statically generated the requested path 
+   HTML and JSON. This includes running getStaticProps.
+   =>When we generate 3 path by hard coding then only 3 HTML & JSON pages
+     are generated after 'yarn build' in the [].next folder. 
+     But when we load: 
+     localhost:3000/posts/4
+     then new HTML and JSON files are generated for 4th page under
+     .[]next folder
+
+4. When that's done,  the browser receives the JSON for the generated 
+   path. This will be used to automatically render the page with the 
+   requested props. From the user's perspective, the page will be 
+   swapped from the fallback page to the full page.
+
+5. At the same time,  Next.js keeps track of the new list of pre-rendered pages.
+   Subsequent requests to the same path will serve the generated page, just liek
+   other pages pre-rendered at build time.
                         
 
 
