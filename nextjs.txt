@@ -1531,6 +1531,19 @@ getStaticPaths fallback:true
    Subsequent requests to the same path will serve the generated page, just liek
    other pages pre-rendered at build time.
                         
+STEPS:
+-------
+I. For fallback:true only the paths returned from the 
+getStaticPath() will be pre-rendered during build time.
+Example: 1.html, 1.json, 2.html, 2.json, 3.html, 3.json will
+be created
+
+II. If we navigate a path that not returned form getStaticPath()
+Exampe:localhost:3000/posts/4
+then 404 page is not navigated. Then fallback UI will be presented.
+While fallback UI presented then getStaticPath() call the appropiate
+page and 4.html and 4.json page will be statically generated in the 
+build folder.
 
 
 
