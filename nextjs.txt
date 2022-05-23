@@ -1555,4 +1555,15 @@ if(!data.id){
     }
 -------------- 
 
+                        
+WHEN TO USE:
+------------
+1. The true value is most suitable if our app has a very large number
+   of static pages that depend on data
+   Example: A large e-commerce site.
+
+2. If we want all the product pages to be pre-renderd but if we have few
+   thousand of products, then build time will take long time.
+   Then we may statically generated some popular products and 
+   use fallback:true for the rest products
 
