@@ -1684,5 +1684,38 @@ export async function getStaticProps(context){
     }
 }
 
-
 -------------------------------
+Step1:
+Import
+---------
+import {useRouter} from 'next/router'
+---------
+for fallback page
+
+Step2:
+Add this code to get fallback page during fatching 
+the appropiate html and json code under function Post({post})
+
+---------
+const router = useRouter()
+if(router.isFallback){
+   return  <h1>Loding...</h1>
+}
+---------
+
+Step:3
+Add this code on getStaticProps(context) to get 404 page if we try to get not 
+relavent content
+---------
+if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+---------
+
+
+
+
+
+
