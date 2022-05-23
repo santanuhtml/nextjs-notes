@@ -1545,6 +1545,14 @@ While fallback UI presented then getStaticPath() call the appropiate
 page and 4.html and 4.json page will be statically generated in the 
 build folder.
 
-
+*** Here our API have post ID 1 to 100. If anyone try to 
+get above 100 then they will get 404 error page.
+--------------
+if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+-------------- 
 
 
