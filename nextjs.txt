@@ -1734,6 +1734,17 @@ getStaticPaths fallback: 'blocking'
 4. At the same time, Next.js keeps track of the new list of pre-rendered pages. 
    Subsequent requests to the same path will serve the generated page, just like
    other pages pre-rendered at build time.
+   
+   When to use
+------------
+1. On a UX level, sometimes, people prefer the page to be loaded without a loading
+   indecator if the wait time is a few milli seconds. This helps aoid the layout shift.
+
+2. Technically 'blocking' introduce because Some crawlers did not support JavaScript. 
+   so the loading page would be rendered and then the full page would be loaded which 
+   was causing a problame.
+
+BUT developer on next.js prefer to use fallback:true;
 
 CODE SETUP FOR fallback: 'blocking'
 -----------------------------
