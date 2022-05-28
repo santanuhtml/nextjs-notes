@@ -1724,6 +1724,8 @@ getStaticPaths fallback: 'blocking'
 2. The paths that have not been generated at build time will not result in a 404
    page. Instead, on the first request, Next.js will ender the page on the server 
    and return the generated HTML.
+   => it will not give 404 page error and Also do not load any fallback UI,
+      It will ender the page on the server and return the generated HTML.
 
 3. When that's done, the browser receives the HTML for the generted path. From
    the user's perspective, it will transition from "the browser is requesting the
