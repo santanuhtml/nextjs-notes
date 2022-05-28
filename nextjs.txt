@@ -1467,7 +1467,7 @@ const paths = data.map(post =>{
 
 we return fallback key for getStaticPaths() and it is mandatary.
 fallback has three possibal valules
-fallback:false|true|bloking
+fallback:false|true|'blocking'
 
 getStaticPaths fallback:false
 -----------------------------
@@ -1714,7 +1714,7 @@ if(!data.id){
     }
 ---------
 -----------------------------
-getStaticPaths fallback:'bloking'
+getStaticPaths fallback: 'blocking'
 -----------------------------
 1. The paths returned from getStaticPaths will rendered to HTML at build
    time by getStaticProps.
