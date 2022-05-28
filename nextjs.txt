@@ -1713,6 +1713,25 @@ if(!data.id){
         }
     }
 ---------
+-----------------------------
+getStaticPaths fallback:'bloking'
+-----------------------------
+1. The paths returned from getStaticPaths will rendered to HTML at build
+   time by getStaticProps.
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
+
+2. The paths that have not been generated at build time will not result in a 404
+   page. Instead, on the first request, Next.js will ender the page on the server 
+   and return the generated HTML.
+
+3. When that's done, the browser receives the HTML for the generted path. From
+   the user's perspective, it will transition from "the browser is requesting the
+   page" to "the full page is loaded". There is no flash fo loading/fallback state.
+
+4. At the same time, Next.js keeps track of the new list of pre-rendered pages. 
+   Subsequent requests to the same path will serve the generated page, just like
+   other pages pre-rendered at build time.
 
 
 
