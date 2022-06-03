@@ -19,6 +19,10 @@
 9. Fetching All Data For Post List
 10. getStaticPaths fallback
 11. Static Generation & Issues
+12. Incremental Static Regeneration(ISR)
+13. ISR example
+    i.  json-server
+    ii. creating Product folder
 
 ===============================
 1. Creating new proje
@@ -1908,9 +1912,9 @@ But it can not solve the stale data, means if you render 1000 pages at build tim
 and remaining pages are generated using fallback:true|'blocking' based on incoming request.
 Now if we want to  change the data in a Page which already requested, then data will not updated.
 
-
-Incremental Static Regeneration(ISR)
---------------------------------
+===============================
+12. Incremental Static Regeneration(ISR)
+===============================
 Now there was a need to update only changed pages without rebuild the entire app.
 Using ISR, Next.js allows us to update static pages after we build our application.
 
@@ -1951,7 +1955,212 @@ iii. When a user request after 10 second then Stale page searved  [stale of prev
        we use second form of pre-rendering that is Server Site Rendering.***
 
 
+===============================
+13. ISR example
+    i.  json-server
+    ii. creating Product folder
+===============================
+
+Here we use 'json-server' in place of 'JSON Placeholder' because 
+to see ISR example we need to change JSON data, which is not 
+Possibal using 'JSON Placeholder'.
+So, here we will install 'json-server' where we can change data
+as our want.
+
+---------------------
+i. json-server
+---------------------
+Step1:
+In 'package.json' file add 'json-server' to install json-server.
+to do add:
+"json-server": "0.17.0", 
+under "dependencies"
+-------------------------------------
+
+ "dependencies": {
+    "json-server": "0.17.0",
+    "next": "12.1.5",
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  },
+
+-------------------------------------
+
+Step2:
+After this add a script 
+"serve-json": "json-server --watch db.json --port 4000"
+to serving list of products on localhost under port 4000
+-------------------------------------
+
+"scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+     "serve-json": "json-server --watch db.json --port 4000"
+  },
+
+-------------------------------------
+
+Step3:
+Under root we create 'db.json' for data and keep this code
+-------------------------------------
+
+{
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/products/
+http://localhost:4000/products/1
+
+Note:
+here we take 'products' because of  "products":[...] in step 3 
+
+---------------------
+ii. creating product folder
+---------------------
+for this example create product folder and under this we
+create 'index.js' & '[productId].js' file.
+
+[]pages
+  - []products
+      - index.js
+      - [productId].js
 
 
+
+index.js
+-------------------------------------
+
+import Link from 'next/link'
+
+function ProductList({products}){
+    return(
+        <div>
+            <h1>List of Posts 100</h1>
+            {
+                products.map(product =>{
+                    return(
+                        <div key={product.id}>
+                            <Link href={`products/${product.id}`} passHref>
+                              <h2>{product.id}{product.title} {product.price}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default ProductList;
+
+export async function getStaticProps(){
+    console.log('Generation / Regeneration')
+    const response = await fetch('http://localhost:4000/products/')
+    const data = await response.json()
+
+    return{
+        props:{
+            products:data
+        },
+        revalidate: 10, // In seconds
+    }
+}
+
+-------------------------------------
+
+
+[productId].js
+-------------------------------------
+
+import {useRouter} from 'next/router'
+
+function Product({product}){
+    const router = useRouter()
+
+    if(router.isFallback){
+        return  <h1>Loding...</h1>
+    }
+
+    return(
+        <div>
+            <h2>{product.id} {product.title} {product.price}</h2>
+            <p>{product.description}</p>
+        </div>
+    )
+}
+
+export default Product;
+
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {productId: '1'}
+            }
+        ],
+        fallback: true,
+    }
+}
+
+export async function getStaticProps(context){
+    console.log('Generation / Regeneration')
+    const {params} = context
+    const response = await fetch(
+        `http://localhost:4000/products/${params.productId}`
+        )
+    const data = await response.json()
+    if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+    return{
+        props:{
+            product:data,
+        },
+        revalidate: 10, // In seconds
+    }
+}
+
+-------------------------------------
+
+yarn serve-json
+yarn build
+yarn start
+
+
+http://localhost:3000/products
+http://localhost:3000/products/1
+
+***When we building an app where we can not affort to get Stale page after 10 second then
+   we use second form of pre-rendering that is Server Site Rendering.***
 
 
