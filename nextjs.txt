@@ -18,6 +18,7 @@
 8. Fetching Data For Post List
 9. Fetching All Data For Post List
 10. getStaticPaths fallback
+11. Static Generation & Issues
 
 ===============================
 1. Creating new proje
@@ -1798,7 +1799,7 @@ export async function getStaticProps(){
      - [postId].js
 
 FULL CODE OF [postId].js (same as fallback:false just add 'blocking' insted of false)
-=================================
+--------------------------------
 
 function Post({post}){
     return(
@@ -1845,3 +1846,112 @@ export async function getStaticProps(context){
         },
     }
 }
+
+
+
+===============================
+11. Static Generation & Issues
+===============================
+1. Static Generation is a method of pre-rendering where the HTML Pages
+   are generated a t build time.
+
+2. The pre-rendered static pages can be pushed to a CDN, cached and served to 
+   clients across the globe almost instantly.
+
+3. Static content is fast and better for SEO as they are immediately indexed by 
+   search engines
+
+4. Static generatin with getStaticProps for data fetching and getStaticPaths for
+   dynamic pages seems like a really good approch to a wide variety of applications
+   in production
+
+
+Issues
+-----------
+1. The build time is proportional to the number of pages in the application
+2. A page once generated can contain stale date till the time you rebuild the application
+
+
+Issue With Build Time:
+----------------------
+The build time is proportional to the number of pages in the application.
+Example:
+lets A page takes 100ms to build.
+1. if a basic E-commerce app with 100 products take 10 seconds to build.
+2. if a successful E-commerce app with 100,000 products takes >2.5 hours to build.
+   it's not just the time, there are cost inplications as well.
+
+
+Issue with stale data:
+Q. What if we build the app only once in a while?
+-----------------------
+Depending on the nature of your application, if E-commerce app is not an application
+which we build and deploy once in a while. Product details, especially product prices
+can vary everyday. 
+Example: In the time of sells lets price becomes 10,000 to 9,000 then we need to 
+re-build this app again, even for the small chane we need to re-build this app.
+Then it will be big problame.
+
+
+What about getStaticPaths?
+---------------------------
+In getStaticPaths we learn that using fallback:true|'blocking' we can pre-render 
+few pages at build time and remaining pages can be pre-rendered on request.
+
+Out of 10,000 pages
+It only possible if an E-commerce site which have 90% dynamci pages and 10% static
+pages because getStaticPaths() works only with dynamic pages.
+we are lucky that most of the E-commers site has 90% dynamic pages means we can
+use getStaticPaths() to solve this time issue on build time.
+
+But it can not solve the stale data, means if you render 1000 pages at build time
+and remaining pages are generated using fallback:true|'blocking' based on incoming request.
+Now if we want to  change the data in a Page which already requested, then data will not updated.
+
+
+Incremental Static Regeneration(ISR)
+--------------------------------
+Now there was a need to update only changed pages without rebuild the entire app.
+Using ISR, Next.js allows us to update static pages after we build our application.
+
+Features
+i.   A regeneration is done only if a user makes a request after the revalidate time.
+ii.  revalidate does not mean the page automatically regenerate every 10 second
+iii. If a user visit out our product details page but there is no other user hitting
+     the pgae the entire day, the re-generation does not happen.
+
+
+How?
+In the getStaticProps function, apart from the props key, we can specify 
+a 'revalidate' key.
+----------------------
+export async function getStaticProps() {
+  const res = await fetch('https://.../posts')
+  const posts = await res.json()
+
+  return {
+    props: {
+      posts,
+    },
+    revalidate: 10, // In seconds
+  }
+}
+----------------------
+i.   When a user request then pre-renderd page searved
+ii.  When a user request within 10 second then same cased pre-renderd page searved
+iii. When a user request after 10 second then Stale page searved  [stale of previous page] 
+     and Also Page Regeneration was triggered. When the page successfully generated then   
+     next.js invalidate this cached page and for any new request it searved updated page.
+     (if backgroun re-generaton faild then cached page searved)
+
+     So, Next.js searved Stale page while revalidation is happining in the background.
+
+
+    ***When we building an app where we can not affort to get Stale page after 10 second then
+       we use second form of pre-rendering that is Server Site Rendering.***
+
+
+
+
+
+
