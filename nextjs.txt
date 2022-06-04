@@ -1971,6 +1971,10 @@ as our want.
 i. json-server
 ---------------------
 Step1:
+Install json-serve:
+npm install -g json-server
+
+Step2:
 In 'package.json' file add 'json-server' to install json-server.
 to do add:
 "json-server": "0.17.0", 
@@ -1986,7 +1990,7 @@ under "dependencies"
 
 -------------------------------------
 
-Step2:
+Step3:
 After this add a script 
 "serve-json": "json-server --watch db.json --port 4000"
 to serving list of products on localhost under port 4000
@@ -2002,7 +2006,7 @@ to serving list of products on localhost under port 4000
 
 -------------------------------------
 
-Step3:
+Step4:
 Under root we create 'db.json' for data and keep this code
 -------------------------------------
 
