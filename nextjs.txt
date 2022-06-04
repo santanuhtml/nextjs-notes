@@ -2390,6 +2390,9 @@ export async function getServerSideProps(context) {
   }
 
 -------------------------------------
+yarn serve-josn
+yarn build
+yarn start
 
 http://localhost:3000/news/sports
 http://localhost:3000/news/politics
