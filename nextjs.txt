@@ -27,6 +27,7 @@
 15. SSR example
     i.  json-server
     ii. creating news folder
+16. SSR context with dynamic parameter
 
 ===============================
 1. Creating new proje
@@ -2334,6 +2335,62 @@ export async function getServerSideProps() {
 -------------------------------------
 Note:
 **Here we use "getServerSideProps()" 
+
+
+===============================
+16. SSR context with dynamic parameter
+===============================
+Now we get News details 
+create new page called [category].js under []news
+
+[]pages
+  - []news
+      - index.js
+      - [category].js
+
+
+
+[category].js
+-------------------------------------
+
+function ArticleListByCategory({articles , category}){
+    return(
+        <div>
+            <h1>Showing new for category {category}</h1>
+            {
+                articles.map(article =>{
+                    return(
+                        <div key={article.id}>
+                            <h2>{article.id} {article.title}</h2>
+                            <p>{article.description}</p>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default ArticleListByCategory
+
+// This gets called on every request
+export async function getServerSideProps(context) {
+    const {params} = context
+    const {category} = params
+    const response = await fetch(`http://localhost:4000/news?category=${category}`)
+    const data = await response.json()
+    return { 
+        props: { 
+            articles: data,
+            category,
+        } 
+    }
+  }
+
+-------------------------------------
+
+http://localhost:3000/news/sports
+http://localhost:3000/news/politics
 
 
 
