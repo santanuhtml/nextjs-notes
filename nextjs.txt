@@ -27,7 +27,7 @@
 15. SSR example
     i.  json-server
     ii. creating news folder
-16. SSR context with dynamic parameter
+16. SSR with dynamic parameter
 
 ===============================
 1. Creating new proje
@@ -2338,7 +2338,7 @@ Note:
 
 
 ===============================
-16. SSR context with dynamic parameter
+16. SSR with dynamic parameter
 ===============================
 Now we get News details 
 create new page called [category].js under []news
