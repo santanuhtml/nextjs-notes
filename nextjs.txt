@@ -23,6 +23,10 @@
 13. ISR example
     i.  json-server
     ii. creating Product folder
+14. Server-side Rendering (SSR)
+15. SSR example
+    i.  json-server
+    ii. creating news folder
 
 ===============================
 1. Creating new proje
@@ -2166,5 +2170,181 @@ http://localhost:3000/products/1
 
 ***When we building an app where we can not affort to get Stale page after 10 second then
    we use second form of pre-rendering that is Server Site Rendering.***
+   
+   
+ ===============================
+14. Server-side Rendering (SSR)
+===============================
+i.  In SSR a page is not pre-render at build time but at request time.
+
+ii. SSR is a form of pre-rendering where the HTML is generated at request time.
+
+iii. *** In SSR the function will never run client-side, 
+     the code we write insite "getServerSideProps" not included in
+     the JS bundle that is sent to the browser. ***
+
+iv.  ** We can write server-side code directly in "getServerSideProps"
+
+v.   getServerSideProps is allowed only in a page and connot be run from a 
+     regualr component file.
+     
+vi.  It is used only for pre-rendering and not client-side data fetching.
+
+vii. getServerSideProps should return an object and object should contain a 
+     props key which is an object*
+
+viii. getServerSideProps will run at request time.
+
+
+When we need SSR?
+i. SSR is required  when we need to fetch data pre request 
+   for example News website where content is very dynamic menes news
+   articles published almost every second, then we can not affort to
+   have the stale data
+
+ii. Also SSR is required when we need to fetch personalized data keeping in mind SEO.
+
+*** keep in mind that Server-side Rendering (SSR) is slower than 
+    Static Site Generation, because getServerSiteProps runs only on the
+    server side and the HTML is generated on each request.
+    Therefore,
+    use Server-side Rendering only if absolutely necessary.
+
+
+===============================
+15. SSR example
+    i.  json-server
+    ii. creating news folder
+===============================
+Here we use 'json-server' in place of 'JSON Placeholder' because 
+to see SSR example.
+
+---------------------
+i. json-server
+---------------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+Under root we create 'db.json' for data and keep this code.
+here we add news object as data
+-------------------------------------
+
+{
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 1",
+            "description": "Description 1",
+            "catigory": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 2",
+            "description": "Description 2",
+            "catigory": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 3",
+            "description": "Description 3",
+            "catigory": "sports"
+        }
+    ],
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/news/
+http://localhost:4000/news/1
+
+
+---------------------
+ii. creating news folder
+---------------------
+for this example create news folder and under this we
+create 'index.js'
+
+[]pages
+  - []news
+      - index.js
+      
+
+index.js
+-------------------------------------
+
+function NewsArticleList({articles}){
+    return(
+        <div>
+            <h1>List of News Articles</h1>
+            {
+                articles.map(article =>{
+                    return(
+                        <div key={article.id}>
+                            <h2>{article.id} {article.title} | {article.catigory}</h2>
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default NewsArticleList;
+
+
+// This gets called on every request
+export async function getServerSideProps() {
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/news`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+            articles: data,
+        } 
+    }
+  }
+  
+  
+-------------------------------------
+Note:
+**Here we use "getServerSideProps()" 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
