@@ -28,6 +28,7 @@
     i.  json-server
     ii. creating news folder
 16. SSR with dynamic parameter
+17. Client-side Data Fetching
 
 ===============================
 1. Creating new proje
@@ -2396,6 +2397,127 @@ yarn start
 
 http://localhost:3000/news/sports
 http://localhost:3000/news/politics
+
+===============================
+17. Client-side Data Fetching
+===============================
+We might not always need to pre-render the data.
+Example: 
+For User Dashboard page, where 
+i.  it is private and is behind the login screen.
+ii. Also which is highly user-specifig and SEO is not relevant
+There we no need to pre-render the data.
+
+-------------
+json-server
+-------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+here we add dashboard data
+-------------------------------------
+
+{
+    "dashboard":{
+            "posts":5,
+            "likes":100,
+            "followers":20,
+            "following":50
+        },
+    
+    
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 101",
+            "description": "Description 1",
+            "category": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 202",
+            "description": "Description 2",
+            "category": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 303",
+            "description": "Description 3",
+            "category": "sports"
+        }
+    ],
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+
+-------------------------------------
+
+Now Create 'dashboard.js' under []pages folder.
+
+[]pages
+  - dashboard.js
+
+-------------------------------------
+
+import {useState, useEffect} from 'react'
+
+function Dashboard(){
+    const [isLoading, setIsLoding] = useState(true)
+    const [dashboardData, setDashboardData] = useState(null)
+
+    useEffect(() =>{
+        async function fetchDashboardData(){
+            const response = await fetch(`http://localhost:4000/dashboard`)
+            const data = await response.json()
+            setDashboardData(data)
+            setIsLoding(false)
+        }
+        fetchDashboardData()
+    }, [])
+    if(isLoading){
+        return <h2>Loding...</h2>
+    }
+    return(
+        <div>
+            <h2>Dashboard</h2>
+            <h2>Posts - {dashboardData.posts}</h2>
+            <h2>Likes - {dashboardData.likes}</h2>
+            <h2>Followers - {dashboardData.followers}</h2>
+            <h2>Following - {dashboardData.following}</h2>
+            <h2></h2>
+        </div>
+    )
+}
+
+export default Dashboard
+
+
+-------------------------------------
+
+yarn serve-json
+yarn dev
+
+http://localhost:3000/dashboard
 
 
 
