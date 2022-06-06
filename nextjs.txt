@@ -29,7 +29,7 @@
     ii. creating news folder
 16. SSR with dynamic parameter
 17. Client-side Data Fetching
-
+18. Client-side Data Fetching using SWR (basic)
 ===============================
 1. Creating new proje
 ===============================
@@ -2518,6 +2518,61 @@ yarn serve-json
 yarn dev
 
 http://localhost:3000/dashboard
+
+
+===============================
+18. Client-side Data Fetching using SWR (basic)
+===============================
+
+SWR is React Hook libary for Data fetching.
+
+STEP:1
+Install SWR package using:
+--------------
+yarn add swr
+--------------
+
+STEP:2
+create new file called 'dashboard-swr.js'
+under []pages folder
+
+-------------------------------------
+
+import useSWR from 'swr'
+
+const fetcher = async()=>{
+    const response = await fetch(`http://localhost:4000/dashboard`)
+    const data = await response.json()
+    return data
+}
+
+function DashboardSWR(){
+    const {data, error} = useSWR('dashboard', fetcher)
+    if(error) return 'An error has occured'
+    if(!data) return 'Loding'
+    return(
+        <div>
+            <h2>Dashboard</h2>
+            <h2>Posts - {data.posts}</h2>
+            <h2>Likes - {data.likes}</h2>
+            <h2>Followers - {data.followers}</h2>
+            <h2>Following - {data.following}</h2>
+            <h2></h2>
+        </div>
+    )
+}
+
+export default DashboardSWR
+
+-------------------------------------
+
+yarn serve-josn
+yarn dev
+
+http://localhost:3000/dashboard-swr
+
+Note: SWR is the best way to fetch data.
+      With out any load it can fetch data
 
 
 
