@@ -30,7 +30,8 @@
 16. SSR with dynamic parameter
 17. Client-side Data Fetching
 18. Client-side Data Fetching using SWR (basic)
-19. Pre-rendering + Client Side Data Fetching.
+19. Pre-rendering + Client Side Data Fetching
+20. Summery of Pre-rendering & Data Fetching
 ===============================
 1. Creating new proje
 ===============================
@@ -2925,6 +2926,45 @@ export async function getServerSideProps(context) {
   }
 
 -------------------------------------
+
+
+
+===============================
+20. Summery of Pre-rendering & Data Fetching
+===============================
+1. Pre-rendering refers to the Pre-geneartion of HTML in advance 
+   which result in better performance and SEO.
+
+2. Next Js supports two forms of Pre-rendering
+   i.  Static Generation
+   ii. Server-side Rendering (SSR)
+
+3. Static Generation:
+   i.   In this method HTML pages are generated at build time.
+   ii.  Pages can be build once, cached by a CDN and served to clients almost instantaly
+   iii. Static Generaton is most recommended among two types of Pre-rendering.
+   iv.  Example: 
+        I.   Marketing Or Blog site
+        II.  For a normal page, use 'getStaticProps' function to fetch the data ahead of time
+        III. For a dynamic page, we use 'getStaticPath' function to know the possibal values for
+             the dynamic parameter to pre-render those pages.
+    
+   v.   fallback:false | true | 'blocking'
+   vi.  Main disadvantage of Static Generation is cannot be update without a full re-build.
+   vii. Icremental Static Regeneration (ISR)
+
+4. Server-side Rendering (SSR):
+   i.   SSR Fetch data at request time
+   ii.  Personalize data based on user information in the incoming request
+   iii. Example:
+        I.  News listing page
+   iv.  'getServerSideProps' function helps with SSR data Fetching.
+
+5. Combining Pre-rendering with Client side data fetching
+
+6. Shallow routing - Routing without calling getStaticProps/getServerSideProps
+
+*** Pre-rendering & Data Fetching are most important pillers of Next.js
 
 
 
