@@ -11,7 +11,7 @@
    VIII.Custom 404 page
 4. About Pre-rendering
 5. Pre-rendering
-   I.  Static Site Generation
+   I.  Static Generation
    II. Server-side Rendering
 6. Data Fetching
 7. Pages with Components
