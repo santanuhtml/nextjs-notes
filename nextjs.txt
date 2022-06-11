@@ -858,7 +858,7 @@ II. Pre-rendering helps with SEO. In React App have only div tag with id="root"
    I.  Static Site Generation
    II. Server-side Rendering
 ===============================
-Next JS supports tow forms of pre-rendering
+Next JS supports two forms of pre-rendering
 I.  Static Site Generation:
 
     i. Static Site Generation is a method of pre-rendering where
