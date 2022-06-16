@@ -26,12 +26,15 @@
 14. Server-side Rendering (SSR)
 15. SSR example
     i.  json-server
-    ii. creating news folder
-16. SSR with dynamic parameter
-17. Client-side Data Fetching
-18. Client-side Data Fetching using SWR (basic)
-19. Pre-rendering + Client Side Data Fetching
-20. Summery of Pre-rendering & Data Fetching
+    ii. creating news folder   
+16. SSR example 2
+    I.  Post List
+    II. Single Post (Using Id)       
+17. SSR with dynamic parameter
+18. Client-side Data Fetching
+19. Client-side Data Fetching using SWR (basic)
+20. Pre-rendering + Client Side Data Fetching
+21. Summery of Pre-rendering & Data Fetching
 ===============================
 1. Creating new proje
 ===============================
@@ -2344,7 +2347,143 @@ Note:
 
 
 ===============================
-16. SSR with dynamic parameter
+16. SSR example 2
+    I.  Post List
+    II. Single Post (Using Id)
+===============================
+First setup the json-server
+---------------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+Under root we create 'db.json' for data and keep this code.
+here we add news object as data
+-------------------------------------
+
+{
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 1",
+            "description": "Description 1",
+            "catigory": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 2",
+            "description": "Description 2",
+            "catigory": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 3",
+            "description": "Description 3",
+            "catigory": "sports"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/news/
+http://localhost:4000/news/1
+
+
+-------------------
+SSR example
+   I.  Post List
+-----------------
+for this example create news folder and under this we
+create 'index.js' & [newsId].js
+
+[]pages
+  - []news
+      - index.js
+      - [newsId].js
+
+
+
+CODE OF
+index.js
+-------------------------------------
+
+import Link from "next/link";
+
+function NewsList({newsList}){
+  return(
+    <div>
+        <h1>News List</h1>
+        {
+            newsList.map(news=>{
+                return(
+                    <div key={news.id}>
+                        <Link href={`/news/${news.id}`} passHref>
+                          <a><h3>{news.id} {news.title} | {news.category}</h3></a>
+                        </Link>
+                        <p>{news.description}</p>
+                    </div>
+                )
+            })
+        }
+    </div>
+  )
+}
+export default NewsList
+
+export async function getServerSideProps(){
+    const response = await fetch('http://localhost:4000/news');
+    const data = await response.json();
+    return{
+        props:{
+            newsList:data
+        }
+    }
+}
+
+-------------------------------------
+CODE OF
+[newsId].js
+-------------------------------------
+
+function SingleNews({data}){
+    return(
+        <div>
+             <h1>{data.id} {data.title} | {data.category}</h1>
+             <p>{data.description}</p>
+        </div>
+    )
+}
+export default SingleNews;
+
+export async function getServerSideProps(context){
+    const {params} = context
+    const response = await fetch(`http://localhost:4000/news/${params.newsId}`)
+    const data = await response.json()
+    //console.log(data)
+    //if data not fount go 404 page
+    if (!data.id) {
+       return {
+        notFound: true,
+       }
+    }
+
+    return {
+    props: { data }, // will be passed to the page component as props
+    }
+}
+
+-------------------------------------
+*** Note:My coding ***
+-------------------------------------
+
+
+===============================
+17. SSR with dynamic parameter
 ===============================
 Now we get News details 
 create new page called [category].js under []news
@@ -2402,7 +2541,7 @@ http://localhost:3000/news/sports
 http://localhost:3000/news/politics
 
 ===============================
-17. Client-side Data Fetching
+18. Client-side Data Fetching
 ===============================
 We might not always need to pre-render the data.
 Example: 
@@ -2524,7 +2663,7 @@ http://localhost:3000/dashboard
 
 
 ===============================
-18. Client-side Data Fetching using SWR (basic)
+19. Client-side Data Fetching using SWR (basic)
 ===============================
 
 SWR is React Hook libary for Data fetching.
@@ -2580,7 +2719,7 @@ Note: SWR is the best way to fetch data.
 
 
 ===============================
-19. Pre-rendering + Client Side Data Fetching.
+20. Pre-rendering + Client Side Data Fetching.
 ===============================
 Here we lean how to Pre-render a page using SSR with 
 Client Side Data Fetching.
@@ -2931,7 +3070,7 @@ export async function getServerSideProps(context) {
 
 
 ===============================
-20. Summery of Pre-rendering & Data Fetching
+21. Summery of Pre-rendering & Data Fetching
 ===============================
 1. Pre-rendering refers to the Pre-geneartion of HTML in advance 
    which result in better performance and SEO.
