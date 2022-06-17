@@ -1,0 +1,472 @@
+API Routes
+------------------
+1. Introduction
+2. Basic API
+3. Fetching Data
+   I.  GET Request
+   II. POST Request
+4. Dynamic API Routes
+5. API DELETE Request
+===============================
+1. Introduction
+===============================
+Intro
+API Routes:
+i.   Next JS is a full stack framework
+
+ii.  You can wirte the Front-end Code in React and also write APIs that
+     can be called by the Front-end code
+
+iii. Within the pages folder, we need to create a folder called []api
+
+iv.  WithIn that []api folder, we can define all the APIs for our Application.
+
+v.   We can add business logic without needing to write any additional custom
+     server code and without having to configure any API routes
+
+vi.  Next Js gives us everything we need to write full-stackl React + Node Application.
+
+-------------------  
+SETUP:
+
+Under []pages folder delete:
+[]api     
+index.js
+
+Under []styles folder delete:
+Home.module.css
+ 
+===============================
+2. Basic API
+===============================
+Example:1
+
+Under []pages folder create a new folder called []api
+and under []api folder create new file called index.js
+
+[]pages
+  - []api
+    - index.js
+
+Code of index.js
+--------------------------------
+
+export default function handler(req, res) {
+    res.status(200).json({ name: 'Home API Route' })
+}
+
+--------------------------------
+
+yarn dev
+http://localhost:3000/api
+
+
+Example:2
+Similarly we can create another API
+
+[]pages
+  - []api
+    - index.js
+    - dashboard.js
+
+Code of dashboard.js
+--------------------------------
+
+export default function handler(req, res) {
+    res.status(200).json({ name: 'Dashboard API Route' })
+}
+
+--------------------------------
+
+http://localhost:3000/api/dashboard
+
+    
+Example:3
+With Nested folder
+
+[]pages
+  - []api
+    - index.js
+    - dashboard.js
+    - []blog
+      - index.js
+
+index.js
+--------------------------------
+
+export default function handler(req, res) {
+    res.status(200).json({ name: 'Blog API Route' })
+}
+
+--------------------------------
+http://localhost:3000/api/blog
+
+
+Example:4
+
+[]pages
+  - []api
+    - index.js
+    - dashboard.js
+    - []blog
+      - index.js
+      - recent.js
+
+code of recent.js
+
+--------------------------------
+
+export default function handler(req, res) {
+    res.status(200).json({ name: 'Recent Blog API Route' })
+}
+
+--------------------------------
+http://localhost:3000/api/blog/recent
+
+
+===============================
+3. Fetching Data
+   I.  GET Request
+   II. POST Request
+===============================
+I.  GET Request
+=====================
+Here we learn Fetching Data, Click on a button.
+That is "GET Request throught API Routes"
+
+STEP:1
+Here we have to create a []data folder under root
+which data we will fetch throuth API.
+Under []data folder create 'comment.js' file.
+
+root
+  - []data
+    - comments.js
+
+Data of comments.js
+-------------------------------
+
+export const comments = [
+    {
+        id:1,
+        text: 'This is the first comment',
+    },
+    {
+        id:2,
+        text: 'This is the second comment',
+    },
+    {
+        id:3,
+        text: 'This is the third comment',
+    }
+]
+
+-------------------------------
+
+STEP:2
+Now to get this comments Data, we have to create 
+i.  []comments folder under []api folder 
+ii. under []comments folder create 'index.js' file
+
+[]pages
+  - []api
+    - []comments
+       - index.js
+
+Code of index.js
+------------------------------
+
+import { comments } from "../../../data/comments";
+
+export default function handler(req, res){
+    res.status(200).json(comments)
+}
+
+------------------------------
+Now we can successfully fetch that data in API Routes. 
+We can check in this link:
+
+http://localhost:3000/api/comments
+
+
+STEP:3
+Now we will display this comments under page folder on
+click event.
+For this we will create
+i.  []comments page under []pages folder
+ii. under []comments folder create 'index.js' page to dispaly 
+    comment data
+
+[]pages
+  - []api
+     - []comments
+       - index.js
+
+  - []comments
+     - index.js
+
+
+------------------------------
+
+import {useState} from 'react';
+
+function commentsPage(){
+    const [comments, setComments] = useState([]); //[] for empty value
+    // async function fetchComments(){
+    // }
+    const fetchComments = async () =>{
+        const response = await fetch('api/comments');
+        const data = await response.json();
+        setComments(data);
+    }
+
+    return(
+        <div>
+            <button onClick={fetchComments}>Load Comments</button>
+            {
+                comments.map(comment=>{
+                    return(
+                        <div key={comment.id}>
+                            {comment.id} {comment.text}
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default commentsPage;
+
+------------------------------
+http://localhost:3000/comments
+
+
+=====================
+II. POST Request
+=====================
+For POST Request we have to post a comment and it will
+store in comment database which is 
+- []data
+    - comments.js
+
+and after GET request this comment through Button we can see the list of 
+comments including newly added comment.
+
+
+
+STEP:1
+[]pages
+  - []comments
+     - index.js
+create another STATE for comment where initial valu is empty
+----------------
+ const [comment, setComment] = useState('');
+----------------
+
+STEP:2
+To post comment we will create input field
+----------------
+<input type='text' value={comment} onChange={e=> setComment(e.target.value)}  />
+<button onClick={submitComment}>Submit Comment</button>
+----------------
+
+STEP:3
+Now send comment as Data 
+----------------
+
+//Process Sending Comment as Data in Fron-end
+    const submitComment = async () =>{
+        const response = await fetch('/api/comments', {
+            method: 'POST',
+            body:JSON.stringify({comment: comment}),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        console.log(data)
+    } 
+
+----------------
+
+STEP:4
+i.   check that request is 'GET' or 'POST' using if-else
+ii.  For POST, we request form body for comment which is
+     req.body.comment
+iii. Now we insert new data inside an object 'newComment'
+iv.  after this we push this data under comments
+     comments.push(newComment)
+v.   finally response OK for POST
+     res.status(201).json(newComment)
+
+
+[]pages
+  - []api
+     - []comments
+        - index.js
+
+----------------
+
+import { comments } from "../../../data/comments";
+
+export default function handler(req, res){
+    if(req.method === 'GET'){
+        res.status(200).json(comments)
+    }
+    else if(req.method === 'POST'){
+        const comment = req.body.comment
+        const newComment = {
+            id: Date.now(),
+            text: comment
+        }
+        comments.push(newComment)
+        res.status(201).json(newComment)
+    }
+}
+
+----------------
+
+FULL CODE of
+[]pages
+  - []comments
+     - index.js
+
+------------------------------
+
+import {useState} from 'react';
+
+function commentsPage(){
+    const [comments, setComments] = useState([]); //[] for empty value
+    const [comment, setComment] = useState('');
+    // async function fetchComments(){
+    // }
+    const fetchComments = async () =>{
+        const response = await fetch('api/comments');
+        const data = await response.json();
+        setComments(data);
+    }
+    
+    //Process Sending Comment as Data in Fron-end
+    const submitComment = async () =>{
+        const response = await fetch('/api/comments', {
+            method: 'POST',
+            body:JSON.stringify({comment: comment}),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        console.log(data)
+    } //end Process Sending Comment as Data in Fron-end
+
+    return(
+        <div>
+            <input type='text' value={comment} onChange={e=> setComment(e.target.value)}  />
+            <button onClick={submitComment}>Submit Comment</button>
+            <button onClick={fetchComments}>Load Comments</button>
+            {
+                comments.map(comment=>{
+                    return(
+                        <div key={comment.id}>
+                            {comment.id} {comment.text}
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default commentsPage;
+
+------------------------------
+
+FULL CODE of
+[]pages
+  - []api
+     - []comments
+        - index.js
+
+------------------------------
+
+import { comments } from "../../../data/comments";
+
+export default function handler(req, res){
+    if(req.method === 'GET'){
+        res.status(200).json(comments)
+    }
+    else if(req.method === 'POST'){
+        const comment = req.body.comment
+        const newComment = {
+            id: Date.now(),
+            text: comment
+        }
+        comments.push(newComment)
+        res.status(201).json(newComment)
+    }
+}
+
+------------------------------
+http://localhost:3000/comments
+
+*** Her we store that data in temporary Array.
+    We can also that data in data base using that code.
+
+
+===============================
+4. Dynamic API Routes
+===============================
+Creating Dynamic API Routes is same as creating
+Dynamic pages.
+create [commentId].js API file under []comments folder
+
+[]pages
+  - []api
+     - []comments
+        - index.js
+        - [commentId].js
+
+
+Here the task of [commentId].js is to return single comment 
+to the request 
+
+
+[commentId].js
+------------------------------
+
+import { comments } from "../../../data/comments";
+
+export default function handler(req, res){
+    const {commentId} = req.query
+    const comment = comments.find((comment) => comment.id ===parseInt(commentId))
+    res.status(200).json(comment)
+}
+
+------------------------------
+http://localhost:3000/api/comments/1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
