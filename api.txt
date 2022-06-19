@@ -3,10 +3,15 @@ API Routes
 1. Introduction
 2. Basic API
 3. Fetching Data
-   I.  GET Request
-   II. POST Request
+    I.  GET Request
+    II. POST Request
 4. Dynamic API Routes
 5. API DELETE Request
+6. Patch Request [self]
+7. Catch All API Routes
+8. Optional Catch All Routes
+10. API Summery
+11. APIs and Pre-rendering
 ===============================
 1. Introduction
 ===============================
@@ -437,6 +442,8 @@ import { comments } from "../../../data/comments";
 
 export default function handler(req, res){
     const {commentId} = req.query
+     
+    //if(req.method === 'GET'){ WE CAN KEEP BELOW CODE HERE }	
     const comment = comments.find((comment) => comment.id ===parseInt(commentId))
     res.status(200).json(comment)
 }
@@ -446,27 +453,273 @@ http://localhost:3000/api/comments/1
 
 
 
+===============================
+5. API DELETE Request
+===============================
+For Delete Request we will create a Delete button on each of the
+comment. On click event comment will be deleted.
+
+----------------
+
+FULL CODE of
+[]pages
+  - []comments
+     - index.js
+
+------------------------------
+
+import {useState} from 'react';
+
+function commentsPage(){
+    const [comments, setComments] = useState([]); //[] for empty value
+    const [comment, setComment] = useState('');
+    // async function fetchComments(){
+    // }
+    const fetchComments = async () =>{
+        const response = await fetch('api/comments');
+        const data = await response.json();
+        setComments(data);
+    }
+    
+    //Process Sending Comment as Data in Fron-end
+    const submitComment = async () =>{
+        const response = await fetch('/api/comments', {
+            method: 'POST',
+            body:JSON.stringify({comment: comment}),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        console.log(data)
+    } //end Process Sending Comment as Data in Fron-end
+
+    //Delete Comment
+    const deletecomment = async commentId => {
+        const response = await fetch(`/api/comments/${commentId}`, {
+            method: 'DELETE'
+        })
+        const data = await response.json()
+        console.log(data)
+        fetchComments()
+    } //end process of Delete Comment
+
+    return(
+        <div>
+            <input type='text' value={comment} onChange={e=> setComment(e.target.value)}  />
+            <button onClick={submitComment}>Submit Comment</button>
+            <button onClick={fetchComments}>Load Comments</button>
+            {
+                comments.map(comment=>{
+                    return(
+                        <div key={comment.id}>
+                            {comment.id} {comment.text}
+                            {/* DELETE COMMENT BUTTON */}
+                            <button onClick={()=> deletecomment(comment.id)}>Delete Comment</button>
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default commentsPage;
 
 
 
 
 
 
+------------------------------
+[]pages
+  - []api
+     - []comments
+        - index.js
+        - [commentId].js
+------------------------------
+
+import { comments } from "../../../data/comments";
+
+export default function handler(req, res){
+    const {commentId} = req.query
+    if(req.method === 'GET'){
+        const comment = comments.find(
+                (comment) => comment.id ===parseInt(commentId)
+            )
+        res.status(200).json(comment)
+    }
+    else if(req.method === 'DELETE'){
+        const deletedComment = comments.find(
+            (comment) => comment.id === parseInt(commentId)
+        )
+        const index = comments.findIndex(
+           (comment) => comment.id === parseInt(commentId)
+            )
+            comments.splice(index, 1)
+
+        res.status(200).json(deletedComment)
+    }
+
+}
+
+------------------------------
+http://localhost:3000/comments
+
+
+===============================
+7. Catch All API Routes
+===============================
+Some time we create an API Route where some segments are optional
+Example:
+http://localhost:3000/api/seg1/seg2/seg3
+let here set2, seg3 are optional
+
+First we creatre a Catch file [...params].js
+
+[]pages
+  - []api
+     - index.js
+     - [...params].js
+     - []comments
+        - index.js
+        - [commentId].js
+ 
+Code of [...params].js  
+------------------------------
+
+export default function handler(req, res){
+    const params = req.query.params
+    console.log(params)
+    res.status(200).json(params)
+}
+
+------------------------------
+http://localhost:3000/api
+http://localhost:3000/api/test
+http://localhost:3000/api/test/test02
+http://localhost:3000/api/test/test02/test03
+
+
+
+===============================
+8. Optional Catch All Routes
+===============================
+
+[]pages
+  - []api
+     - index.js
+     - [...params].js
+     - []comments
+        - index.js
+        - [commentId].js
+
+if we delete index.js under []api folder and we run 
+http://localhost:3000/api 
+then we get an 404 error page
+
+Then we will use Optional Catch All Route by replacing
+[...params].js to [[...params]].js
+
+
+[]pages
+  - []api
+     - [[...params]].js
+     - []comments
+        - index.js
+        - [commentId].js
+
+
+Now use
+http://localhost:3000/api 
+we don't get any error
+
+
+===============================
+10. API Summery
+===============================
+i.   API routing mechanism is similar to page based routing mechanism
+ii.  APIs are associated with a route based on their file name
+iii. Every API route exports a default function typically named as handler function
+iv.  The handler functon receives the request and response as parameters
+v.   Cater to different requests types like GET and POST using req.method
+vi.  Dynamic API routes
+vii. Catch al API routes
+viii. How to handle a Delete request
+ix.  ** We should not call our own API routes for pre-rendering content **
 
 
 
 
+===============================
+11. APIs and Pre-rendering
+===============================
+Here we explain that
+"We should not call our own API routes for pre-rendering content"
+To do that we need an example where we fetch each comment from API
+
+We will crate a file "[commentId].js"
+
+[]pages
+  - []comment
+     - index.js
+     - [commentId].js
 
 
+------------------------------
+
+import { comments } from "../../data/comments";
+
+function Comment({comment}){
+    return(
+        <div>
+            {comment.id} {comment.text}
+        </div>
+    )
+}
+export default Comment;
+
+//Fetching Paths
+export async function getStaticPaths(){
+    return{
+        paths:[
+            {params:{commentId: '1'}},
+            {params:{commentId: '2'}},
+            {params:{commentId: '3'}}
+        ],
+        fallback:false
+    }
+}
+
+//Fetching Data using find() 
+export async function getStaticProps(context){
+    const {params} = context;
+    const {commentId} = params;
+    
+    const comment = comments.find(
+        (comment) => comment.id === parseInt(commentId)
+    )
+
+    // Not to call Our own API Routes within getStaticProps() & getServerSideProps()
+    // We can call external API Routes
+    /** SO, DON'T DO THIS 
+     const response = await fetch(`http:localhost:3000/api/comments/${commentID}`)
+     const data = await resonse.json();
+     */
+
+     return{
+        props:{
+            comment,
+        }
+     }
+}
+
+------------------------------
+
+http://localhost:3000/comments/1
+http://localhost:3000/comments/2
+http://localhost:3000/comments/3
 
 
-
-
-
-
-
-
-
-
+*** we should not call an API Route for Pre-rendering. ***
 
 
