@@ -536,6 +536,8 @@ export default commentsPage;
      - []comments
         - index.js
         - [commentId].js
+        
+ CODE OF [commentId].js
 ------------------------------
 
 import { comments } from "../../../data/comments";
