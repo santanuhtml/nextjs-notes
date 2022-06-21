@@ -1,6 +1,6 @@
-			--------------------------------------
-			   Next JS Miscellaneous Features
-			--------------------------------------
+--------------------------------------
+Next JS Miscellaneous Features
+--------------------------------------
 1. App Layout
 2. Head Component
 
