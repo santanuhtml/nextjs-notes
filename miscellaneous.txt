@@ -3,7 +3,11 @@ Next JS Miscellaneous Features
 --------------------------------------
 1. App Layout
 2. Head Component
-
+3. Image Component
+4. Absolute Imports & Module Paths
+5. Next Build, Start and Export
+6. TypeScript Support
+7. Preview Mode ***
 ===============================
 1. App Layout
 ===============================
@@ -403,18 +407,394 @@ export async function getStaticProps(context){
 -------------------------------
 
 
+===============================
+3. Image Component
+===============================
+We store images in []public folder in our root directory.
+
+Lets keep 5 pet images with name 1.jpg,2.jpg,...,5.jpg
+Now we will diplay those 5 images in 'pet.js' page
+
+[]pages
+  - index.js
+  - pet.js
+
+CODE OF
+pet.js
+-------------------------------
+
+import Image from "next/image";
+
+function Pets(){
+    return(
+        <div>
+            <h1>Pets Images</h1>
+            {
+                ['1','2','3','4','5'].map(path=>{
+                    return(
+                        <div key={path}>
+                            <Image src={`/${path}.jpg`} alt="pet" width="280" height="280" />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default Pets;
+
+-------------------------------
+http://localhost:3000/pets
+
+Note:
+src={`/${path}.jpg`} because 'public' folder treated as 
+root directory.
+
+--------------
+Advantages of <Image /> Component
+--------------
+i.   It resize image and convert to .webp format
+ii.  lazy load features
+iii. Placehoder Image features if Original image not loaded
+
+
+*** Placeholder image can remove Layout shift whic will be helpfull
+for page speed.
+
+*** Placeholder under RND
+
+
+===============================
+4. Absolute Imports & Module Paths
+===============================
+During import any file, image we need to add proper path...
+Example:
+import img from '../public/1.jpg'
+
+Now in Next JS Using Absolute Import we can reduct import code line.
+Example:
+import img from '/public/1.jpg'
+
+
+To do that create a file called 'jsconfig.json' under project root
+
+root
+ []pages
+ []styles
+ - jsconfig.json
+
+CODE OF 
+jsconfig.json
+-------------------------------
+
+{
+    "compilerOptions": {
+        "baseUrl": "."
+    }
+}
+
+-------------------------------
+* Having more content but not important
 
 
 
+===============================
+5. Next Build, Start and Export
+===============================
+yarn build  
+----------------------
+Build the application for production in the .next folder
+
+----------------------
+yarn start  
+----------------------
+Starts a Node.js server that supports hybrid pages, serving
+both statically generated and server-side rendered pages
+
+I. Good Example for using 'next export' is:
+   If our page are render dynamically then we should use 'next start'
+
+   **And if our page content is static and can be generated at build time
+   then we will use next step also 'next export' given below
+
+----------------------
+yarn export 
+----------------------
+Export all your pages to static HTML files that you can serve 
+without the need of a Node.js server.
+
+This Host our app any static hosting service or a CDN without 
+having to maintain a server.
+
+
+I. Main Problam of 'next export' is
+   i.  Cannot use ISR or SSR
+   ii. Cannot use Client side data fetching or dynamic content
+
+
+II. Good Example for using 'next export' is
+    Landing pages, blogs and any app where the content is 
+    generated at build time.
+
+------------------------------------
+
+STEP:1
+
+To do the entair things we need to add a script in 
+'package.json' file    
+
+-----------------
+"export": "next build && next export",
+-----------------        
+
+Full code
+-----------------  
+
+"scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build && next export",
+    "lint": "next lint",
+    "serve-json": "json-server --watch db.json --port 4000"
+  },
+
+-----------------  
+   
+STEP:2
+Now after build the application, use export
+
+----------------- 
+yarn build
+yarn export
+----------------- 
+
+Note:
+List of Next JS features are not compatable with 'yarn export'
+Means has some limitation with NEXT Export.
+example:
+i.  Image component for image optimization
+    import Image from "next/image"; 
+
+ii. getServerSideProps() note exported because it will be static
+
+iii. use getStaticProps() with getStaticPaths() because to get static paths
+     since project is static
+
+iv. use fallBack:false because site will be static.
+...
 
 
 
+===============================
+7. Preview Mode ***
+===============================
+Preview Mode Helps application that rely on a CMS.
+
+CMS stands for Content Managememt System and is a tool that helps
+users create, manage and modify content on a website without the need 
+for specialized techinical knowledge.
+
+--------------
+STEP:1
+Creating a simple news post
+--------------
+Create new folder called []news under []pages folder
+under []news folder create new file calle 'index.js'
+
+[]pages
+ - []news
+    - index.js
+
+Code of
+index.js
+------------------------------------
+
+function News({data}){
+    return <h1>{data}</h1>
+}
+export default News;
+
+export async function getStaticProps(){
+    return{
+        props:{
+            data: 'List of Published articles',
+        },
+    }
+}
+
+------------------------------------
+http://localhost:3000/news
+Inspect -> Application -> cookies 
+No cookies found
+
+--------------
+STEP:2
+--------------
+Create new file called 'preview.js' under []api folder
+
+[]pages
+  - []api
+     - preview.js
+
+CODE OF
+preview.js
+------------------------------------
+
+export default function handler(req, res) {
+   res.setPreviewData({})
+   res.end('Preview mode enabled')
+}
+
+------------------------------------
+http://localhost:3000/api/preview
+Inspect -> Application -> cookies
+Then we can see:
+__next_preview_data
+__prerender_bypass
+
+Now cookies avalabel, Means we are SUCCESSFULLY ENABLE PREVIEW MODE
+
+Now we have to redirect User to appropiate route, so
+we use 'res.redirect()' in place of 'res.end()'
+
+CODE OF
+preview.js
+------------------------------------
+
+export default function handler(req, res) {
+    res.setPreviewData({})
+    res.redirect(req.query.redirect)
+  }
+
+//Here we pass an url with in res.redirect() which will type in browser
+//http://localhost:3000/api/preview?redirect=/news
+
+//In idean condition if we are working with a CMS, then CMS preview button
+//to open the app passing with in the parameter
+
+------------------------------------
+http://localhost:3000/api/preview?redirect=/news
+
+Now we redirct to news page.
 
 
+--------------
+STEP:3
+--------------
+Now we will update index.js page of []news folder.
+
+[]pages
+ - []news
+    - index.js
+
+Code of
+index.js
+------------------------------------
+
+function News({data}){
+    return <h1>{data}</h1>
+}
+export default News;
+
+export async function getStaticProps(context){
+    console.log('*** Running getStaticProps***')
+    return{
+        props:{
+            data: context.preview ? 'List of Draft Articles' : 'List of Published Articles',
+        },
+    }
+}
+
+------------------------------------
+http://localhost:3000/news
+
+We will see that
+"List of Published Articles" 
+replaced by
+"List of Draft Articles" 
+because we already ENABLE PREVIEW MODE
+
+Now
+Open new terminal and  
+yarn build
+yarn start
+
+http://localhost:3000/news
+Now we see
+"List of Published Articles"  
+because when we
+Inspect -> Application -> cookies
+donot get cookies avalabel, Means PREVIEW MODE not active.
+
+Now add in url
+http://localhost:3000/api/preview?redirect=/news
+Now cookies are set and
+"List of Draft Articles" display
+         +
+When we see terminal then can see 
+---------Running getStaticProps---------
+
+when every we refersh the page then it will be printed.
+*** Means when PREVIEW MODE ENABEL then in every request
+    getStaticPorps will run, even after the application 
+    has been build and deploy.
 
 
+--------------------
+Disable Preview Mode
+--------------------
+In []api folder create new file called 'disable-preview.js'
+
+[]pages
+  - []api
+     - preview.js
+     - disable-preview.js
 
 
+CODE OF
+disable-preview.js
+------------------------------------
 
+export default function handler(req, res) {
+    res.clearPreviewData()
+    res.end('***Preview Mode disable***')
+}
 
+------------------------------------
+yarn dev
+http://localhost:3000/news
+"List of Published Articles"  
+because when we
+Inspect -> Application -> cookies
+donot get cookies avalabel, Means PREVIEW MODE DISABLE.
+
+Now add in url
+http://localhost:3000/api/preview?redirect=/news
+Now cookies are set and
+"List of Draft Articles" display
+
+*** TO DISABLE PREVIEW MODE use
+http://localhost:3000/api/disable-preview
+
+now again visi
+http://localhost:3000/news/
+and we see
+"List of Published Articles"  
+because PREVIEW MODE DISABLE and all cookies are removed.
+
+NOTE:
+If we have any data to send preview mode then we can add in setPreviewData.
+Her is user: 'Vishwas'
+--------------
+export default function handler(req, res) {
+    res.setPreviewData({user: 'Vishwas'})
+    res.redirect(req.query.redirect)
+  }
+--------------     
+
+and access it using context
+--------------   
+console.log('*** Running getStaticProps***' , context.previewData)
+--------------   
 
