@@ -8,6 +8,8 @@ Next JS Miscellaneous Features
 5. Next Build, Start and Export
 6. TypeScript Support
 7. Preview Mode ***
+8. Redirects
+9. Environment Variables
 ===============================
 1. App Layout
 ===============================
@@ -797,4 +799,106 @@ and access it using context
 --------------   
 console.log('*** Running getStaticProps***' , context.previewData)
 --------------   
+
+
+===============================
+8. Redirects
+===============================
+Redirect is very usefull when we re-organize our website when some link replaced by
+new links or when we maintain our website then we redirect our website to Site Under
+Maintenance page.
+Example:
+https://site.com/old-blog-link.php
+now we update this link to 
+https://site.com/new-blog-link.php
+
+Now if any one bookmark the old link and click over the link, then user automatically
+redirect of the new updated link.
+
+Example:
+To do that we need to create a file called 'next.config.js'
+CODE OF
+next.config.js
+------------------------------------
+
+module.exports = {
+    reactStrictMode:true,
+    redirects:async () =>{
+        return [
+            {
+                source: '/about',
+                destination: '/',
+                permanent: true
+            }
+        ]
+    }
+}
+
+------------------------------------
+Here when we type
+http://localhost:3000/about
+
+it redirect to
+http://localhost:3000
+
+Means here about page redirect to home page.
+
+NOTE:
+1. during website maintenance we may use 
+   permanent: false
+   Means path is 307 Temporary Redirect
+
+2. For permanent path chane we use
+   permanent: true
+   308 Premanent Redirect
+
+3. Also we can add multiple redirect links and
+   Dynamic parameters.
+
+   Example:
+-----------------------
+
+module.exports = {
+    reactStrictMode:true,
+    redirects:async () =>{
+        return [
+            {
+                source: '/about',
+                destination: '/',
+                permanent: false
+            },
+            {
+                source:'/old-blog/:id',
+                destination:'/new-blog/:id',
+                permanent:true,
+            }
+        ]
+    }
+}
+
+-----------------------
+
+
+===============================
+9. Environment Variables
+===============================
+To sequere App information like User Name, Password, Database Name
+we use Environment Variables.
+Create a file called '.env.local' under Projec Root.
+
+root
+ - .env.local
+
+Now let we connet to our database
+
+CODE OF
+.env.local
+---------------------------
+DB_USER = Vishwas
+DB_PASSWORD = PASSWORD
+---------------------------
+So if we keep information under this '.env.local' file
+we cannot render this values.
+
+
 
