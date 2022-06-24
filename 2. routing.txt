@@ -1,4 +1,4 @@
-1. Creating new proje
+1. Creating new project
 2. Project Folder Structure
 3. Routing Section
    I.   Route with Pages
@@ -11,7 +11,7 @@
    VIII.Custom 404 page
 
 ===============================
-1. Creating new proje
+1. Creating new project
 ===============================
 I. Select Project folder open New terminal and type below code
 ----------------
