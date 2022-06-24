@@ -1,0 +1,904 @@
+--------------------------------------
+Next JS Miscellaneous Features
+--------------------------------------
+1. App Layout
+2. Head Component
+3. Image Component
+4. Absolute Imports & Module Paths
+5. Next Build, Start and Export
+6. TypeScript Support
+7. Preview Mode ***
+8. Redirects
+9. Environment Variables
+===============================
+1. App Layout
+===============================
+For App Layout we need header and footer components.
+For that we need to create a folder called []components.
+Under this folder create a folder called 'Header.js' and
+'Footer.js'
+
+STEP:1
+
+root
+  - []pages
+  - []components
+     - Header.js
+     - Footer.js
+
+CODE OF
+Header.js
+-------------------------------
+
+function Header(){
+    return(
+        <div>
+            <div className='layout-header'>Header</div>
+        </div>
+    )
+}
+export default Header;
+
+-------------------------------
+
+CODE OF
+Footer.js
+-------------------------------
+
+function Footer(){
+    return(
+        <div>
+            <div className='layout-footer'>Footer</div>
+        </div>
+    )
+}
+export default Footer;
+
+-------------------------------
+
+SETP:2
+Now we will create a file called 'layout.css' under
+[]styles folder and add css code for 'Header.js' and 'Footer.js'
+
+root 
+  - []pages
+  - []styles
+     - layout.css
+
+CODE OF
+layout.css
+-------------------------------
+
+.layout-header{
+    background-color: #264653;
+    color: #f4a261;
+    font-size: 30px;
+    text-align: center;
+    padding: 30px;
+}
+.layout-footer{
+    background-color: #264653;
+    color: #e9c46a;
+    font-size: 30px;
+    text-align: center;
+    padding: 20px;
+}
+
+-------------------------------
+
+SETP:3
+Now Header and Footer component are visible in all pages so
+we will visit _app.js page
+
+root
+ []pages
+  - index.js
+  - _app.js
+
+Default Code of _app.js
+-------------------------------
+
+import '../styles/globals.css'
+
+function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}
+
+export default MyApp
+
+-------------------------------
+
+Note: 
+Here we know that if we add any component under MyApp component, 
+then it will be visible in every pages.
+So we will
+i.  import Header and Footer Component 
+ii. Add Header and Footer Component under MyApp Component
+iii.import the corrosponding CSS file called 'layout.css'
+
+Updated Code of 
+_app.js
+-------------------------------
+
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+
+import '../styles/layout.css'
+
+function MyApp({ Component, pageProps }) {
+  return(
+    <div>
+      <Header />
+      <Component {...pageProps} />
+      <Footer />
+    </div>
+  )
+}
+
+export default MyApp
+
+-------------------------------
+http://localhost:3000/
+
+** Now we can add our project css in this 'layout.css' file.
+For example our project has 'about.js' page. we can add about page
+css in this 'layout.css' file.
+
+root
+ []pages
+  - index.js
+  - about.js
+
+CODE OF about.js
+-------------------------------
+
+function About(){
+    return(
+        <div>
+            <h1 className='pageTitle'>About Page</h1>
+        </div>
+    )  
+}
+export default About;
+
+-------------------------------
+
+CODE OF layout.css
+-------------------------------
+
+.layout-header{
+    background-color: #264653;
+    color: #f4a261;
+    font-size: 30px;
+    text-align: center;
+    padding: 30px;
+}
+.layout-footer{
+    background-color: #264653;
+    color: #e9c46a;
+    font-size: 30px;
+    text-align: center;
+    padding: 20px;
+}
+.pageTitle{
+    font-size: 50px;
+    color: #f4a261;
+}
+
+-------------------------------
+http://localhost:3000/about
+
+
+*** In some page we don't need Same Header & Footer section. ***
+    Called Per-page Layout
+
+For example: Sign Up page.
+Using 'getLayout' function we can do it.
+Lets create a page called 'signup.js' under []pages
+
+[]pages
+  - index.js
+  - signup.js
+
+CODE OF signup.js
+-------------------------------
+
+//import Footer compoentnt 
+//because we will use it below
+import Footer from "../components/Footer";
+
+function Signup(){
+    return(
+        <div>
+            <h1 className='pageTitle'>Signup Page</h1>
+        </div>
+    )  
+}
+export default Signup;
+
+Signup.getLayout = function pageLayout(page){
+    return(
+        <div>
+            {page}
+            <Footer />
+        </div>
+    )
+}
+
+-------------------------------
+
+CODE OF _app.js
+-------------------------------
+    
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+
+import '../styles/layout.css'
+
+function MyApp({ Component, pageProps }) {
+  
+  //Checking different layout have or not
+  if(Component.getLayout){
+    return(
+      <div>
+        {Component.getLayout(<Component {...pageProps} />)}
+      </div>
+    )
+  }
+  //End Checking different layout have or not
+
+  return(
+    <div>
+      <Header />
+      <Component {...pageProps} />
+      <Footer />
+    </div>
+  )
+}
+
+export default MyApp
+
+
+-------------------------------
+http://localhost:3000/signup
+
+Note: Here we get a signup page where don't have Header section,
+      Only have footer section.
+
+
+
+===============================
+2. Head Component
+===============================
+In sense of SEO Head Component is very important because
+it provides title, page description etc.
+
+Normally Next Js provide Head section but it has very minimum 
+information, It don't show title and description about this page.
+This is whay Head Component introductd.
+
+------------
+PART-I
+------------
+Let add title and description in about page
+
+Code of about.js
+-------------------------------
+
+import Head from "next/head";
+function About(){
+    return(
+        <div>
+          <Head>
+            <title>About page title</title>
+            <meta name="description" content="About page description..." />
+          </Head>
+          <h1 className='pageTitle'>About Page</h1>
+        </div>
+    )  
+}
+export default About;
+
+-------------------------------
+http://localhost:3000/about
+
+we can see title tab changed and in source code also we can see title and description
+
+------------
+PART-II
+------------
+If we don't need to add Header component to each page for common title and description
+then we can add the common title and description in _app.js page under MyApp() component.
+
+FULL CODE OF
+_app.js
+-------------------------------
+
+// import Head for common title and description
+import Head from 'next/head'
+
+function MyApp({ Component, pageProps }) {
+  return(
+    <div>
+      <Head>
+        <title>Next JS Common title</title>
+        <meta name="description" content="Next JS Common description..." />
+      </Head>
+      <Component {...pageProps} />
+    </div>
+  )
+}
+
+export default MyApp
+
+-------------------------------
+Note:
+i.  So if we add a common "<Head>" Component in _app.js then it will be
+    fetch every created pages if those pages dont't have "<Head/>" Component
+
+ii. If any page have "<Head>" Componet with only title OR description, then
+    missing title OR description tag information will be fetch from common "<Head/>" Component.
+
+
+------------
+PART-III
+------------
+Now we will generate title and description for dynamic pages.
+
+root
+ []pages
+  - []blog
+     - index.js
+     - [blogId].js
+
+CODE OF 
+[blogId].js
+-------------------------------
+
+import Head from "next/head";
+
+function Post({post}){
+    return(
+        <div>
+            <Head>
+                <title>{post.title}</title>
+                <meta name="description" content={post.body} />
+                {/* <meta name="description" content={post.body.slice(0, 60)} /> */}
+            </Head>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+
+export default Post;
+
+export async function getStaticPaths(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    const paths = data.map(post =>{
+        return {
+            params:{
+                blogId: `${post.id}`
+            }
+        }
+    })
+
+    return {
+        paths,
+        fallback: false,
+    }
+}
+
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.blogId}`
+        )
+    const data = await response.json()
+
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+
+
+-------------------------------
+
+
+===============================
+3. Image Component
+===============================
+We store images in []public folder in our root directory.
+
+Lets keep 5 pet images with name 1.jpg,2.jpg,...,5.jpg
+Now we will diplay those 5 images in 'pet.js' page
+
+[]pages
+  - index.js
+  - pet.js
+
+CODE OF
+pet.js
+-------------------------------
+
+import Image from "next/image";
+
+function Pets(){
+    return(
+        <div>
+            <h1>Pets Images</h1>
+            {
+                ['1','2','3','4','5'].map(path=>{
+                    return(
+                        <div key={path}>
+                            <Image src={`/${path}.jpg`} alt="pet" width="280" height="280" />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default Pets;
+
+-------------------------------
+http://localhost:3000/pets
+
+Note:
+src={`/${path}.jpg`} because 'public' folder treated as 
+root directory.
+
+--------------
+Advantages of <Image /> Component
+--------------
+i.   It resize image and convert to .webp format
+ii.  lazy load features
+iii. Placehoder Image features if Original image not loaded
+
+
+*** Placeholder image can remove Layout shift whic will be helpfull
+for page speed.
+
+*** Placeholder under RND
+
+
+===============================
+4. Absolute Imports & Module Paths
+===============================
+During import any file, image we need to add proper path...
+Example:
+import img from '../public/1.jpg'
+
+Now in Next JS Using Absolute Import we can reduct import code line.
+Example:
+import img from '/public/1.jpg'
+
+
+To do that create a file called 'jsconfig.json' under project root
+
+root
+ []pages
+ []styles
+ - jsconfig.json
+
+CODE OF 
+jsconfig.json
+-------------------------------
+
+{
+    "compilerOptions": {
+        "baseUrl": "."
+    }
+}
+
+-------------------------------
+* Having more content but not important
+
+
+
+===============================
+5. Next Build, Start and Export
+===============================
+yarn build  
+----------------------
+Build the application for production in the .next folder
+
+----------------------
+yarn start  
+----------------------
+Starts a Node.js server that supports hybrid pages, serving
+both statically generated and server-side rendered pages
+
+I. Good Example for using 'next export' is:
+   If our page are render dynamically then we should use 'next start'
+
+   **And if our page content is static and can be generated at build time
+   then we will use next step also 'next export' given below
+
+----------------------
+yarn export 
+----------------------
+Export all your pages to static HTML files that you can serve 
+without the need of a Node.js server.
+
+This Host our app any static hosting service or a CDN without 
+having to maintain a server.
+
+
+I. Main Problam of 'next export' is
+   i.  Cannot use ISR or SSR
+   ii. Cannot use Client side data fetching or dynamic content
+
+
+II. Good Example for using 'next export' is
+    Landing pages, blogs and any app where the content is 
+    generated at build time.
+
+------------------------------------
+
+STEP:1
+
+To do the entair things we need to add a script in 
+'package.json' file    
+
+-----------------
+"export": "next build && next export",
+-----------------        
+
+Full code
+-----------------  
+
+"scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build && next export",
+    "lint": "next lint",
+    "serve-json": "json-server --watch db.json --port 4000"
+  },
+
+-----------------  
+   
+STEP:2
+Now after build the application, use export
+
+----------------- 
+yarn build
+yarn export
+----------------- 
+
+Note:
+List of Next JS features are not compatable with 'yarn export'
+Means has some limitation with NEXT Export.
+example:
+i.  Image component for image optimization
+    import Image from "next/image"; 
+
+ii. getServerSideProps() note exported because it will be static
+
+iii. use getStaticProps() with getStaticPaths() because to get static paths
+     since project is static
+
+iv. use fallBack:false because site will be static.
+...
+
+
+
+===============================
+7. Preview Mode ***
+===============================
+Preview Mode Helps application that rely on a CMS.
+
+CMS stands for Content Managememt System and is a tool that helps
+users create, manage and modify content on a website without the need 
+for specialized techinical knowledge.
+
+--------------
+STEP:1
+Creating a simple news post
+--------------
+Create new folder called []news under []pages folder
+under []news folder create new file calle 'index.js'
+
+[]pages
+ - []news
+    - index.js
+
+Code of
+index.js
+------------------------------------
+
+function News({data}){
+    return <h1>{data}</h1>
+}
+export default News;
+
+export async function getStaticProps(){
+    return{
+        props:{
+            data: 'List of Published articles',
+        },
+    }
+}
+
+------------------------------------
+http://localhost:3000/news
+Inspect -> Application -> cookies 
+No cookies found
+
+--------------
+STEP:2
+--------------
+Create new file called 'preview.js' under []api folder
+
+[]pages
+  - []api
+     - preview.js
+
+CODE OF
+preview.js
+------------------------------------
+
+export default function handler(req, res) {
+   res.setPreviewData({})
+   res.end('Preview mode enabled')
+}
+
+------------------------------------
+http://localhost:3000/api/preview
+Inspect -> Application -> cookies
+Then we can see:
+__next_preview_data
+__prerender_bypass
+
+Now cookies avalabel, Means we are SUCCESSFULLY ENABLE PREVIEW MODE
+
+Now we have to redirect User to appropiate route, so
+we use 'res.redirect()' in place of 'res.end()'
+
+CODE OF
+preview.js
+------------------------------------
+
+export default function handler(req, res) {
+    res.setPreviewData({})
+    res.redirect(req.query.redirect)
+  }
+
+//Here we pass an url with in res.redirect() which will type in browser
+//http://localhost:3000/api/preview?redirect=/news
+
+//In idean condition if we are working with a CMS, then CMS preview button
+//to open the app passing with in the parameter
+
+------------------------------------
+http://localhost:3000/api/preview?redirect=/news
+
+Now we redirct to news page.
+
+
+--------------
+STEP:3
+--------------
+Now we will update index.js page of []news folder.
+
+[]pages
+ - []news
+    - index.js
+
+Code of
+index.js
+------------------------------------
+
+function News({data}){
+    return <h1>{data}</h1>
+}
+export default News;
+
+export async function getStaticProps(context){
+    console.log('*** Running getStaticProps***')
+    return{
+        props:{
+            data: context.preview ? 'List of Draft Articles' : 'List of Published Articles',
+        },
+    }
+}
+
+------------------------------------
+http://localhost:3000/news
+
+We will see that
+"List of Published Articles" 
+replaced by
+"List of Draft Articles" 
+because we already ENABLE PREVIEW MODE
+
+Now
+Open new terminal and  
+yarn build
+yarn start
+
+http://localhost:3000/news
+Now we see
+"List of Published Articles"  
+because when we
+Inspect -> Application -> cookies
+donot get cookies avalabel, Means PREVIEW MODE not active.
+
+Now add in url
+http://localhost:3000/api/preview?redirect=/news
+Now cookies are set and
+"List of Draft Articles" display
+         +
+When we see terminal then can see 
+---------Running getStaticProps---------
+
+when every we refersh the page then it will be printed.
+*** Means when PREVIEW MODE ENABEL then in every request
+    getStaticPorps will run, even after the application 
+    has been build and deploy.
+
+
+--------------------
+Disable Preview Mode
+--------------------
+In []api folder create new file called 'disable-preview.js'
+
+[]pages
+  - []api
+     - preview.js
+     - disable-preview.js
+
+
+CODE OF
+disable-preview.js
+------------------------------------
+
+export default function handler(req, res) {
+    res.clearPreviewData()
+    res.end('***Preview Mode disable***')
+}
+
+------------------------------------
+yarn dev
+http://localhost:3000/news
+"List of Published Articles"  
+because when we
+Inspect -> Application -> cookies
+donot get cookies avalabel, Means PREVIEW MODE DISABLE.
+
+Now add in url
+http://localhost:3000/api/preview?redirect=/news
+Now cookies are set and
+"List of Draft Articles" display
+
+*** TO DISABLE PREVIEW MODE use
+http://localhost:3000/api/disable-preview
+
+now again visi
+http://localhost:3000/news/
+and we see
+"List of Published Articles"  
+because PREVIEW MODE DISABLE and all cookies are removed.
+
+NOTE:
+If we have any data to send preview mode then we can add in setPreviewData.
+Her is user: 'Vishwas'
+--------------
+export default function handler(req, res) {
+    res.setPreviewData({user: 'Vishwas'})
+    res.redirect(req.query.redirect)
+  }
+--------------     
+
+and access it using context
+--------------   
+console.log('*** Running getStaticProps***' , context.previewData)
+--------------   
+
+
+===============================
+8. Redirects
+===============================
+Redirect is very usefull when we re-organize our website when some link replaced by
+new links or when we maintain our website then we redirect our website to Site Under
+Maintenance page.
+Example:
+https://site.com/old-blog-link.php
+now we update this link to 
+https://site.com/new-blog-link.php
+
+Now if any one bookmark the old link and click over the link, then user automatically
+redirect of the new updated link.
+
+Example:
+To do that we need to create a file called 'next.config.js'
+CODE OF
+next.config.js
+------------------------------------
+
+module.exports = {
+    reactStrictMode:true,
+    redirects:async () =>{
+        return [
+            {
+                source: '/about',
+                destination: '/',
+                permanent: true
+            }
+        ]
+    }
+}
+
+------------------------------------
+Here when we type
+http://localhost:3000/about
+
+it redirect to
+http://localhost:3000
+
+Means here about page redirect to home page.
+
+NOTE:
+1. during website maintenance we may use 
+   permanent: false
+   Means path is 307 Temporary Redirect
+
+2. For permanent path chane we use
+   permanent: true
+   308 Premanent Redirect
+
+3. Also we can add multiple redirect links and
+   Dynamic parameters.
+
+   Example:
+-----------------------
+
+module.exports = {
+    reactStrictMode:true,
+    redirects:async () =>{
+        return [
+            {
+                source: '/about',
+                destination: '/',
+                permanent: false
+            },
+            {
+                source:'/old-blog/:id',
+                destination:'/new-blog/:id',
+                permanent:true,
+            }
+        ]
+    }
+}
+
+-----------------------
+
+
+===============================
+9. Environment Variables
+===============================
+To sequere App information like User Name, Password, Database Name
+we use Environment Variables.
+Create a file called '.env.local' under Projec Root.
+
+root
+ - .env.local
+
+Now let we connet to our database
+
+CODE OF
+.env.local
+---------------------------
+DB_USER = Vishwas
+DB_PASSWORD = PASSWORD
+---------------------------
+So if we keep information under this '.env.local' file
+we cannot render this values.
+
+
+

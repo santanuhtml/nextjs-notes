@@ -1,0 +1,258 @@
+Styling Introduction
+---------------------------
+1. Golbal Styles
+2. Component Styles
+3. SASS or SCSS
+4. CSS-in-JS Solution
+5. SASS Support
+6. CSS in JS
+7. Styling Summary
+===============================
+1. Golbal Styles
+===============================
+We get global.css file inside the []styles folder
+and this global.css file import to the _app.js file.
+
+root
+
+  []pages
+    - _app.js
+
+  []styles
+    - global.css
+
+----------------
+PART - I
+----------------
+Inside the _app.js file have a component called 'MyAPP' 
+which is present in every page of our Next.js Application.
+Means if we add css then it will add in all pages.
+
+Example:
+CODE OF global.css
+------------------------------
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+* {
+  box-sizing: border-box;
+}
+
+h2{
+  color: orange;
+}
+------------------------------
+This h2 oragne color will add in all pages.
+
+
+----------------
+PART - II
+----------------
+Now we can add another libray in our Next.js App.
+Let we will add bootstrap libary for its css
+
+STEP:1
+Open new terminal and type
+------------------------------
+yarn add bootstrap
+------------------------------
+
+STEP:2
+Now we will import bootstrap css file under
+_app.js file
+
+[]pages
+  - _app.js
+
+------------------------------
+import 'bootstrap/dist/css/bootstrap.min.css'
+------------------------------
+
+
+FULL CODE OF _app.js
+------------------------------
+
+import '../styles/globals.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}
+
+export default MyApp
+
+------------------------------
+
+Now we can apply bootstrap class in Next JS projects
+
+
+===============================
+2. Component Styles
+===============================
+Under []styles folder have file called 'Home.module.css'
+Here module denote it is a css module.
+
+---------------
+Example1:
+---------------
+root
+  - []pages
+     - index.js
+
+  - []styles
+     - Home.module.css
+
+
+CODE OF
+Home.module.css
+-------------------------------
+.title{
+    color: red;
+}
+.text{
+    color: #252525;
+}
+-------------------------------
+
+CODE OF
+index.js
+-------------------------------
+
+import styles from '../styles/Home.module.css'
+
+function Home(){
+    return(
+        <div>
+            <h1 className={styles.title}>Home Page</h1>
+            <p className={styles.text}>lorem ipsum text</p>
+        </div>
+    )  
+}
+export default Home;
+
+-------------------------------
+---------------
+Example2:
+---------------
+Creating new files under []styles folder called
+'About.module.css' & 'Contact.module.css'
+and code of them are:
+
+CODE OF
+About.module.css
+-------------------------------
+.title{
+    color: brown;
+}
+-------------------------------
+
+CODE OF
+Contact.module.css
+-------------------------------
+.title{
+    color: blue;
+}
+-------------------------------
+
+Now link those css files to the corresponding About and Contact pages
+
+CODE OF 
+about.js
+-------------------------------
+
+import styles from '../styles/About.module.css'
+
+function About(){
+    return(
+        <div>
+            <h1 className={styles.title}>About Page</h1>
+        </div>
+    )  
+}
+export default About;
+-------------------------------
+Note: Here Title color is brown
+
+
+CODE OF 
+contact.js
+-------------------------------
+import styles from '../styles/Contact.module.css'
+
+function ContactPage(){
+    return(
+        <div>
+            <h1 className={styles.title}>Contact Page</h1>
+        </div>
+    )
+}
+
+export default ContactPage;
+-------------------------------
+Note: Here Title color is blue
+
+
+
+===============================
+6. CSS in JS
+===============================
+Here we add css file under JSX.
+Let's create a file called 'css-in-js.js' under []pages
+
+[]pages
+  - index.js
+  - css-in-js.js
+
+-----------------
+TYPE:1
+-----------------
+CODE OF 'css-in-js.js'
+-------------------------------
+
+function CSSJS(){
+    return(
+        <div>
+            <h2 style={{color:'#ccc'}}>Hello World</h2>
+        </div>
+    )
+}
+export default CSSJS;
+
+-------------------------------
+
+-----------------
+TYPE:2
+-----------------
+STEP:1
+
+Also we can apply Styled-Component for tha same usage.
+Open Terminal add install 'styled-components'
+-------------------------------
+yarn add styled-components
+-------------------------------
+
+STEP:2
+After install 'styled-components' we will provide a simple theme 
+in our application.
+
+.... ... ...
+
+
+===============================
+7. Styling Summary
+===============================
+i.   Global - In our application, we need to import the CSS file within pages/_app.js
+ii.  Component Level - Next.js Supports CSS Modules using a [name].module.css 
+iii. SASS Support - Install the SASS Package
+iv.  Inline styles and Styled Components
+
+
+

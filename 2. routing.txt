@@ -1,0 +1,819 @@
+1. Creating new proje
+2. Project Folder Structure
+3. Routing Section
+   I.   Route with Pages
+   II.  Nested Routes
+   III. Dynamic Routes
+   IV.  Nested Dynamic Routes
+   V.   Catch-all Routes
+   VI.  Link Component Navigation
+   VII. Programmatically navigate b/w Pages
+   VIII.Custom 404 page
+
+===============================
+1. Creating new proje
+===============================
+I. Select Project folder open New terminal and type below code
+----------------
+npx create-next-app project-name
+----------------
+After Successfully load this code will be shown
+
+cd hello-world
+yarn dev
+
+II. Open Project folder and type
+----------------
+yarn dev
+----------------
+
+III. Open project at
+http://localhost:3000/
+
+*** Note ***
+1. During Development we will use 'yarn dev'
+   we can edit our project during development mode.
+2. For Productin we have to delete [].next folder (video: 20)
+   and run 'yarn build' to build the project for Production.
+3. To run this build project on system then run 'yarn start'.
+   In this build project we can not edit our project.
+
+
+===============================
+2. Project Folder Structure
+===============================
+***Next.js is page based routing
+New downloaded project has []5 folders and 6 files.
+package.json => this is important file where all 'dependencies'
+                'scripts' are provided.
+
+[]public     => This folder holds all public resources of our application.
+                like images, gif, icons etc.
+
+[]pages      => This is the main folder of our application.
+
+
+===============================
+3. Routing Section
+   I.   Route with Pages
+   II.  Nested Routes
+   III. Dynamic Routes
+   IV.  Nested Dynamic Routes
+   V.   Catch-all Routes
+   VI.  Link Component Navigation
+   VII. Programmatically navigate b/w Pages
+   VIII.Custom 404 page
+===============================
+I.   Route with Pages
+===============================
+PART - I
+Ceating Home page.
+------------ 
+[]pages
+  - []api
+  - _app.js
+  - index.js
+
+First delete pre installed []api folder and index.js page.
+create new file called index.js under []pages folder
+
+[]pages
+  - _app.js
+  - index.js
+
+------------
+index.js
+CODE:
+------------
+
+function Home(){
+    return <h1>Home Page</h1>
+}
+export default Home;
+
+------------
+This is our first page Next.js project and the url is
+http://localhost:3000/
+
+------------ 
+PART - II
+Creating About page
+------------ 
+Now we create about.js under []pages folder.
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+
+------------
+about.js
+CODE:
+------------
+
+function About(){
+    return <h1>About Page</h1>
+}
+export default About;
+
+------------
+http://localhost:3000/about
+here we get our another About page.
+
+Note:
+similarly we can create profile.js file to create Profile page
+and we can check this page in this url
+http://localhost:3000/profile
+
+===============================
+II.  Nested Routes
+===============================
+http://localhost:3000/blog
+http://localhost:3000/blog/first
+http://localhost:3000/blog/second
+
+------------ 
+PART - I
+Ceating Blog page.
+------------ 
+
+Creating a page blog.js for Blog page
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - blog.js
+
+------------
+blog.js
+CODE:
+------------
+
+function Blog(){
+    return <h1>Blog Page</h1>
+}
+export default Blog;
+
+-----------
+http://localhost:3000/blog
+
+------------ 
+PART - II
+Ceating Blog sub pages
+------------ 
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - blog.js
+  - []blog
+     - first.js
+     - second.js
+
+------------
+first.js
+CODE:
+------------
+function First(){
+    return <h1>First Blog Page</h1>
+}
+export default First;
+------------
+http://localhost:3000/blog/first
+
+------------
+second.js
+CODE:
+------------
+function Second(){
+    return <h1>Second Blog Page</h1>
+}
+export default Second;
+------------
+http://localhost:3000/blog/second
+------------
+
+PART - III
+*** Here we can also keep the blog.js file under 
+    the []blog folder then we remane this blog.js file to index.js
+    
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+
+===============================
+III. Dynamic Routes
+===============================
+http://localhost:3000/product
+and this page having product list:
+product 1
+product 2
+product 3
+
+dynamically generated id for product details
+http://localhost:3000/id
+example:
+http://localhost:3000/1
+for product 1 details
+
+------------
+PART - I
+Creating a folder called []product and create a file
+called index.js under of this folder.
+------------
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+
+------------
+index.js of []product
+CODE
+------------
+
+function ProductList(){
+    return(
+        <div>
+            <h1>Product 1</h1>
+            <h1>Product 2</h1>
+            <h1>Product 3</h1>
+        </div>
+    )
+}
+
+export default ProductList;
+
+------------
+PART - II
+To create dymanic pages use [id].js under []product.
+To make it meaningful we may use [productId].js
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId].js
+
+
+------------
+[productId].js
+CODE
+------------
+
+function ProductDetails(){
+    return(
+        <div>
+            <h1>Product Details </h1>
+        </div>
+    )
+}
+
+export default ProductDetails;
+
+------------
+http://localhost:3000/product/1
+http://localhost:3000/product/100
+http://localhost:3000/product/500
+
+------------
+PART - III
+Now we have to improve the JSX Code of product details page
+to show product details of the respective product.
+means For product 1 => Product 1 details
+          product 100 => Product 100 details
+          product 500 => Product 500 details
+
+Here we need to call a HOOK From Next package on [productId].js page
+
+------------
+[productId].js
+CODE
+------------
+
+import {useRouter}  from 'next/router'
+
+function ProductDetails(){
+    //useRouter()   calling this hook
+    const router = useRouter()
+    const productId = router.query.productId
+    // const {productId} = router.query
+    return(
+        <div>
+            <h1>Product Details of {productId} </h1>
+        </div>
+    )
+}
+
+export default ProductDetails;
+
+------------
+Now check:
+http://localhost:3000/product/1
+http://localhost:3000/product/100
+http://localhost:3000/product/sweater
+http://localhost:3000/product/jacket
+
+NOTE:
+If we take [productId].js 
+then
+const productId = router.query.productId
+
+If we take [id].js 
+then
+const productId = router.query.id
+
+------------
+
+PART - IV
+** if we type
+http://localhost:3000/product/jacket
+then it will first check 'jacket.js' file having or not under the []product folder.
+if it get this then it will render 'jacket.js' otherwise it will
+render [productId].js file.
+ 
+
+===============================
+IV.  Nested Dynamic Routes
+===============================
+http://localhost:3000/product/1
+Product 1 details
+
+http://localhost:3000/product/1/review/1
+Review 1 for product 1
+
+------------
+PART - I
+i.   First we create a folder with name [productId] under the folder []product. 
+ii.  After this create a new index.js file under [productId]
+iii. Finally copy the code of [productId].js and keep this code on 
+     newly created file index.js
+iv.  Delete [productId].js
+
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+
+------------
+CODE OF
+- []product
+     - index.js
+------------
+function ProductList(){
+    return(
+        <div>
+            <h1>Product 1</h1>
+            <h1>Product 2</h1>
+            <h1>Product 3</h1>
+        </div>
+    )
+}
+
+export default ProductList;
+
+------------
+CODE OF
+- [productId]
+   - index.js
+------------
+
+import {useRouter}  from 'next/router'
+
+function ProductDetails(){
+    //useRouter()   calling this hook
+    const router = useRouter()
+    const productId = router.query.productId
+    return(
+        <div>
+            <h1>Product Details of {productId} </h1>
+        </div>
+    )
+}
+
+export default ProductDetails;
+
+------------
+Now check:
+http://localhost:3000/product/1
+http://localhost:3000/product/100
+http://localhost:3000/product/sweater
+
+
+------------
+PART - II
+Now we will create reviews for each product.
+i.  To create review for each product create a folder called 'review'
+    under the [productId].
+ii. For dynamic reivew id we create new file under folder []review called [reviewId].js
+
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+         - []review
+            - [reviewId].js
+
+-----------
+CODE OF
+- []review
+   - [reviewId].js
+
+-----------
+import {useRouter}  from 'next/router'
+
+function Review(){
+    //useRouter()   calling this hook
+    const router = useRouter()
+    const {productId, reviewId} = router.query
+    return(
+        <div>
+            <h1>Review {reviewId} for Product {productId} </h1>
+        </div>
+    )
+}
+
+export default Review;
+
+-----------
+http://localhost:3000/product/500/review/500
+http://localhost:3000/product/100/review/5
+-----------
+
+Example:2
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+         - []review
+            - [reviewId].js
+   
+  - []post
+     - index.js
+     - [postId]
+       - index.js
+       - []comment
+          - [commentId].js
+
+-----------
+CODE OF
+- []post
+  - index.js
+-----------
+
+function Post(){
+    return(
+        <div>
+            <h1>Post List</h1>
+        </div>
+    )
+}
+
+export default Post;
+
+-----------
+CODE OF
+- [postId]
+   - index.js
+-----------
+
+import {useRouter} from 'next/router'
+
+function SinglePost(){
+    const router = useRouter();
+    const routerId = router.query.postId
+    return(
+        <div>
+            <h1>Single Post {routerId}</h1>
+        </div>
+    )
+}
+
+export default SinglePost;
+
+-----------
+CODE OF
+- []comment
+  - [commentId].js
+-----------
+
+import {useRouter} from 'next/router'
+
+function SinglePostComment(){
+    const router = useRouter();
+    const  {postId, commentId}= router.query
+    return(
+        <div>
+            <h1>Comment Id {commentId} for the Post {postId} </h1>
+        </div>
+    )
+}
+
+export default SinglePostComment;
+
+-----------
+http://localhost:3000/post/500/comment/100
+http://localhost:3000/post/120/comment/new
+
+
+===============================
+VI.  Link Component Navigation
+===============================
+In next application we use Link component to navigate 
+to other pages.
+To do that we import:
+-----------
+import Link from 'next/link'
+-----------
+PART - I
+Let we are Link Blog and Product page form Home page
+index.js
+CODE
+-----------
+
+import Link from 'next/link'
+
+function Home(){
+    return(
+        <div>
+            <h1>Home Page</h1>
+            <Link href='/blog'>
+             <a>Blog</a>
+            </Link>
+            <Link href='/product'>
+            <a>Product</a>
+            </Link>
+        </div>
+    )
+}
+export default Home;
+
+-----------
+PART - II
+Similarly we go back to our Home page (root page).
+Example:from Product page to Home page
+
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList(){
+    return(
+        <div>
+            <h1>Product 1</h1>
+            <h1>Product 2</h1>
+            <h1>Product 3</h1>
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+PART - III
+Navigate to dymanic Routes
+
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList(){
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+            <Link href='/product/3'>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+PART - IV
+Everytime we don't have freedom to write 
+hard code for the dymanic Rought like previous one.
+The product id my be passed via props to the Component.
+
+Right now we don't have any props but 
+Let assume the props have exists and let assign a default value 100
+-----------
+CODE OF
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList({productId = 100}){   //Here we assing 
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+            <Link href='/product/3'>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+
+            <Link href={`/product/${productId}`}>   
+             <a><h1>Product {productId}</h1></a>
+            </Link>
+
+
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+        </div>
+    )
+}
+
+export default ProductList;
+
+-----------
+NOTE:
+'replace' is use as Back Button behaviour to the Home page from browser
+back arrow button.
+-----------
+CODE OF
+- []product
+  - index.js
+-----------
+
+import Link from 'next/link'
+
+function ProductList({productId = 100}){  
+    return(
+        <div>
+            <Link href='/product/1'>
+             <a><h1>Product 1</h1></a>
+            </Link>
+            <Link href='/product/2'>
+             <a><h1>Product 2</h1></a>
+            </Link>
+
+
+            <Link href='/product/3' replace>
+             <a><h1>Product 3</h1></a>
+            </Link>
+
+
+            <Link href={`/product/${productId}`}>   
+             <a><h1>Product {productId}</h1></a>
+            </Link>
+            <Link href='/'>
+            <a>Home Page</a>
+            </Link>
+        </div>
+    )
+}
+
+export default ProductList;
+
+
+===============================
+VII. Programmatically navigate b/w Pages
+===============================
+In this case we learn after summit any button, it Programmatically navigate
+to the another page. For example in Amazone after summit a form successfully it
+navigated to the order conformaton page.
+
+Here let assume we have a Place Order button, after click, it will navigated 
+to the product list page.
+
+-----------
+[]pages
+  - _app.js
+  - index.js
+-----------
+
+import Link from 'next/link'
+import {useRouter} from 'next/router'
+
+function Home(){
+    const router = useRouter()
+    const handleClick = () =>{
+        console.log('Placing your order')
+        router.push('/product')
+    }
+
+    return(
+        <div>
+            <h1>Home Page</h1>
+            <Link href='/blog'>
+             <a>Blog</a>
+            </Link>
+            <Link href='/product'>
+            <a>Product</a>
+            </Link>
+            <button onClick={handleClick}>
+                Order Now
+            </button>
+        </div>
+    )
+}
+export default Home;
+
+-----------
+i.   On click button handelClick function called which is defined.
+ii.  To route another page we import {useRouter}
+
+
+===============================
+VIII.Custom 404 page
+===============================
+In next.js application by default have 404 page, But we can also
+generate our custom 404 page by creating '404.js' page under []page folder.
+
+404.js
+-----------
+
+function PageNotFound(){
+    return(
+        <h1>404 Page</h1>
+    )
+}
+export default PageNotFound;
+
+
+
+
+
+

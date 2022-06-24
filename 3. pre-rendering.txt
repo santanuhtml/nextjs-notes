@@ -1,0 +1,2305 @@
+4. About Pre-rendering
+5. Pre-rendering
+   I.  Static Generation
+   II. Server-side Rendering
+6. Data Fetching
+7. Pages with Components
+8. Fetching Data For Post List
+9. Fetching All Data For Post List
+10. getStaticPaths fallback
+11. Static Generation & Issues
+12. Incremental Static Regeneration(ISR)
+13. ISR example
+    i.  json-server
+    ii. creating Product folder
+14. Server-side Rendering (SSR)
+15. SSR example
+    i.  json-server
+    ii. creating news folder   
+16. SSR example 2
+    I.  Post List
+    II. Single Post (Using Id)       
+17. SSR with dynamic parameter
+18. Client-side Data Fetching
+19. Client-side Data Fetching using SWR (basic)
+20. Pre-rendering + Client Side Data Fetching
+21. Summery of Pre-rendering & Data Fetching
+
+===============================
+4. About Pre-rendering
+===============================
+Next Js generates HTML for each page in advance insted of having
+it all done by client-side JavaScript.
+Pre-rendering is done by default in a Next JS app.
+
+Why Pre-rendering Important:
+----------------------------
+I.  Pre-rendering imporves performance. In React App, we need to wait for the
+    JavaScript to be executed but in Next JS with pre-rendering, the HTML is 
+    already generated ans loads faster.
+
+II. Pre-rendering helps with SEO. In React App have only div tag with id="root"
+    but in Next JS have present proper source code which help index that page for SEO.
+    
+
+
+===============================
+5. Pre-rendering
+   I.  Static Generation
+   II. Server-side Rendering
+===============================
+Next JS supports two forms of pre-rendering
+I.  Static Generation
+
+    i. Static Site Generation is a method of pre-rendering where
+       the HTML pages are generated at build time
+
+    ii. Static Site Generation can be done with and without external data
+
+    iii. To use external data have to use 'getStaticProps' function
+
+    iv. If you navigate directly to the page route, the HTML file is served
+
+    v. If you navigate to the page route from a different route, the page
+       is created client side using the JavaScript and JSON prefetched form the 
+       server. No additional request to the server.
+
+*** Example:1 of Static Site Generation (Pre-rendering) with external data  ***
+    To do that we Fetch dummy JSON data
+===============================
+6. Data Fetching
+===============================
+Part - I
+users.js
+-----------
+function UserList(){
+  return(
+      <div>
+      <h1>List of Users</h1>
+      </div>
+  )
+}
+
+export default UserList
+
+-----------
+Part - II
+feaching data from dummy json and passes through
+props. Here that props is users
+users.js
+-----------
+
+function UserList({users}){
+  return(
+      <div>
+      <h1>List of Users</h1>
+        {
+          users.map(user =>{
+              return(
+                  <div key={user.id}>
+                      <p>{user.name}</p>
+                      <p>{user.email}</p>
+                  </div>
+                )
+              }
+           )
+        }
+      </div>
+  )
+}
+
+export default UserList
+
+export async function getStaticProps(){
+    const resonse = await fetch('https://jsonplaceholder.typicode.com/users')
+    const data = await resonse.json()
+    console.log(data)
+
+    return{
+        props:{
+            users:data
+        }
+    }
+}
+
+
+===============================
+7. Pages with Components
+===============================
+In the above code we can add external component.
+Here we add a compnent for user details.
+
+-----------
+PART - I
+-----------
+under the Project Root folder we create a new folde called []components.
+under this []components folder create new file called user.js
+-----------
+
+[]components
+  - user.js
+
+- users.js
+
+[]pages
+  - _app.js
+  - index.js
+  - about.js
+  - profile.js
+  - []blog
+     - index.js
+     - first.js
+     - second.js
+  - []product
+     - index.js
+     - [productId]
+         - index.js
+         - []review
+            - [reviewId].js
+   
+  - []post
+     - index.js
+     - [postId]
+       - index.js
+       - []comment
+          - [commentId].js
+
+   
+-----------
+Code of
+[]components
+  - user.js
+-----------
+
+function User({user}){
+    return(
+        <div>
+            <p>{user.name}</p>
+            <p>{user.email}</p>
+        </div>
+    )
+}
+
+export default User;
+
+-----------
+Code of
+- users.js
+-----------
+
+import User from '../components/user'
+
+function UserList({users}){
+  return(
+      <div>
+      <h1>List of Users</h1>
+        {
+          users.map(user  =>{
+              return(
+                  <div key={user.id}>
+                      <User user={user} />
+                  </div>
+                )
+              }
+           )
+        }
+      </div>
+  )
+}
+
+export default UserList
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/users')
+    const data = await response.json()
+    console.log(data)
+
+    return{
+        props:{
+            users:data
+        }
+    }
+}
+
+-----------
+
+===============================
+8. Fetching Data For Post List
+===============================
+*** Example:2 of Static Site Generation (Pre-rendering) with external data  ***
+CREATING POST LIST
+creating new folder called []posts under []pages folder
+after this create index.js file under []posts
+
+[]pages
+  - []posts
+     - index.js
+  
+CODE
+-------------------------------
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <h2>{post.id}{post.title}</h2>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data.slice(0,3)
+        }
+    }
+}
+
+-------------------------------
+Note:
+step 1
+In first step create function PostList()
+-----
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+        </div>
+    )
+}
+export default PostList;
+-----
+
+step 2
+i.  In next step to use external data have to use 'getStaticProps' function.
+ii. Under this we fetch dummy data and stored it under 'response'
+iii.After get this data under 'response' we convert this into JSON data using 'response.json()'
+-----
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+}
+-----
+
+step 3
+Now we return this data using an object which must contain a props.
+-----
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data.slice(0,3)
+        }
+    }
+}
+-----
+
+step 4
+i.  Finally we return this data under PostList() usng 'map' function
+ii. Also we destructure this data using 'PostList({posts})'
+-----
+
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <h2>{post.id}{post.title}</h2>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+-----
+Now in Post list we need to add Link to get Post Details:
+
+[]pages
+  - []posts
+     - index.js
+  
+FULL CODE OF POST LIST PAGE on index.js
+=================================
+import Link from 'next/link'
+
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <Link href={`posts/${post.id}`} passHref>
+                              <h2>{post.id}{post.title}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data.slice(0,3)
+        }
+    }
+}
+
+================================= 
+
+GET POST DETAILS
+Now create a file called [postId].js under []posts
+
+[]pages
+  - []posts
+     - index.js
+     - [postId].js
+
+FULL CODE OF [postId].js
+=================================
+
+function Post({post}){
+    return(
+        <div>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+
+export default Post;
+
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {postId: '1'}
+            },
+            {
+                params: {postId: '2'}
+            },
+            {
+                params: {postId: '3'}
+            }
+        ],
+        fallback: false,
+    }
+}
+
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+
+=================================
+Note:
+step 1:
+Creating Post details Function component:
+
+-----
+function Post({post}){
+    return(
+        <div>
+        </div>
+    )
+}
+export default Post;
+-----
+
+step 2:
+i. To get perticular post details we take 'context' parameter on 'getStaticProps'
+ii. After this we destructure this using params
+iii. Finally we call ${params.postId}
+
+-----
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+}
+-----
+
+step 3
+Now we return this data using an object which must contain a props.
+-----
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+----
+step 4
+i.  Finally we return this data under Post() usng 'map' function
+ii. Also we destructure this data using 'Post({posts})'
+-----
+function Post({post}){
+    return(
+        <div>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+export default Post;
+-----
+
+step 5:
+Using 'getStaticPaths' we can create/generate static HTML pages that will be pre-render and
+inform next js, the possibal values for post ID.
+Here we take 3 post list so we will pre-render 3 HTML details pages also
+-----
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {postId: '1'}
+            },
+            {
+                params: {postId: '2'}
+            },
+            {
+                params: {postId: '3'}
+            }
+        ],
+        fallback: false,
+    }
+}
+-----
+
+===============================
+9. Fetching All Data For Post List
+===============================
+Just Before we Fetch only 3 data for Static Site Generation (Pre-rendering) using
+data.slice(0,3) and we create 3 paths by coding.
+
+Now we will Fetching All Data Dynamically.
+
+[]pages
+  - []posts
+     - index.js
+  
+FULL CODE OF POST LIST PAGE on index.js
+-------------------------------
+
+import Link from 'next/link'
+
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <Link href={`posts/${post.id}`} passHref>
+                              <h2>{post.id}{post.title}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data,
+        }
+    }
+}
+
+-------------------------------
+Note:
+Here we just remove data.slice(0,3) to display all post list
+
+NOW WE HAVE TO GET EACH PATH FOR THE EACH POSTS DYNAMICALLY (Previously we slice 3 post and 
+for those 3 pages we generate 3 paths manually)
+
+
+[]pages
+  - []posts
+     - index.js
+     - [postId].js
+
+FULL CODE OF [postId].js
+-------------------------------
+
+function Post({post}){
+    return(
+        <div>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+
+export default Post;
+
+export async function getStaticPaths(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    const paths = data.map(post =>{
+        return {
+            params:{
+                postId: `${post.id}`
+            }
+        }
+    })
+
+    return {
+        // paths: [
+        //     {
+        //         params: {postId: '1'}
+        //     },
+        //     {
+        //         params: {postId: '2'}
+        //     },
+        //     {
+        //         params: {postId: '3'}
+        //     }
+        // ],
+        paths,
+        fallback: false,
+    }
+}
+
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+
+-------------------------------
+step1:
+Since we need to pre-render all HTML pages, so we have to call API link
+   under getStaticPaths() 
+----------
+export async function getStaticPaths(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+----------
+step2:
+to generate paths we use map method and get postId for each posts
+and we return this paths
+----------
+const paths = data.map(post =>{
+        return {
+            params:{
+                postId: `${post.id}`
+            }
+        }
+    })
+    
+    return {
+        paths,
+        fallback: false,
+    }
+----------
+
+===============================
+10. getStaticPaths fallback
+===============================
+
+we return fallback key for getStaticPaths() and it is mandatary.
+fallback has three possibal valules
+fallback:false|true|'blocking'
+
+getStaticPaths fallback:false
+-----------------------------
+1. The paths returnded from getStaticPaths will be rendered to HTML
+   at build time by getStaticProps
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
+
+2. If fallback is set to false, then any paths not returned by getStaticPaths will
+   result in a 404 page
+   => if we pre-render only 3 pages then we can print those 3 pages directly
+      via link example: localhost:3000/posts/1
+                        localhost:3000/posts/2
+                        localhost:3000/posts/3
+			localhost:3000/posts/4 - this return 404 error
+                        
+WHEN TO USE:
+------------
+1. It is most usefull if we have an application with small number 
+of paths to pre-render and new pages are not added often.
+
+2. ** A blog site with few articles is a good example for fallback:false
+   which help faster load time and SEO                    
+                        
+-----------------------------
+getStaticPaths fallback:true
+-----------------------------
+1. The paths returnded from getStaticPaths will be rendered to HTML
+   at build time by getStaticProps
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
+
+2. The paths that have not been generated at build time will not result in a
+   404 page. Instead, Next.js will serve a "fallback" version of the page on 
+   the firest request to sucha a path.
+   => Simply it will not give 404 page error like getStaticPaths fallback:false
+      It will display "fallback" version of the page, after Loding it will 
+      display the page.
+      Here the fallback version is
+      ----------------------------
+      if(router.isFallback){
+        return <h1>Loding...</h1>
+      }
+      ----------------------------
+      
+3. In the background, Next.js will statically generated the requested path 
+   HTML and JSON. This includes running getStaticProps.
+   =>When we generate 3 path by hard coding then only 3 HTML & JSON pages
+     are generated after 'yarn build' in the [].next folder. 
+     But when we load: 
+     localhost:3000/posts/4
+     then new HTML and JSON files are generated for 4th page under
+     .[]next folder
+
+4. When that's done,  the browser receives the JSON for the generated 
+   path. This will be used to automatically render the page with the 
+   requested props. From the user's perspective, the page will be 
+   swapped from the fallback page to the full page.
+
+5. At the same time,  Next.js keeps track of the new list of pre-rendered pages.
+   Subsequent requests to the same path will serve the generated page, just liek
+   other pages pre-rendered at build time.
+                        
+STEPS:
+-------
+I. For fallback:true only the paths returned from the 
+getStaticPath() will be pre-rendered during build time.
+Example: 1.html, 1.json, 2.html, 2.json, 3.html, 3.json will
+be created
+
+II. If we navigate a path that not returned form getStaticPath()
+Exampe:localhost:3000/posts/4
+then 404 page is not navigated. Then fallback UI will be presented.
+While fallback UI presented then getStaticPath() call the appropiate
+page and 4.html and 4.json page will be statically generated in the 
+build folder.
+
+*** Here our API have post ID 1 to 100. If anyone try to 
+get above 100 then they will get 404 error page.
+--------------
+if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+-------------- 
+
+                        
+WHEN TO USE:
+------------
+1. The true value is most suitable if our app has a very large number
+   of static pages that depend on data
+   Example: A large e-commerce site.
+
+2. If we want all the product pages to be pre-renderd but if we have few
+   thousand of products, then build time will take long time.
+   Then we may statically generated some popular products and 
+   use fallback:true for the rest products
+
+
+CODE SETUP FOR fallback:true
+-----------------------------
+
+[]pages
+  - []posts
+     - index.js
+  
+3 POST LIST on index.js (same as old)
+-------------------------------
+
+import Link from 'next/link'
+
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <Link href={`posts/${post.id}`} passHref>
+                              <h2>{post.id}{post.title}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data.slice(0,3)
+        }
+    }
+}
+
+-------------------------------
+
+
+[]pages
+  - []posts
+     - index.js
+     - [postId].js
+
+Here fallback:true so from 4th post
+fallback page UI will be view after load
+related html and josn files, required page 
+also display.
+
+FULL CODE OF [postId].js 
+
+-------------------------------
+
+import {useRouter} from 'next/router'
+
+function Post({post}){
+    const router = useRouter()
+
+    if(router.isFallback){
+        return  <h1>Loding...</h1>
+    }
+
+    return(
+        <div>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+
+export default Post;
+
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {postId: '1'}
+            },
+            {
+                params: {postId: '2'}
+            },
+            {
+                params: {postId: '3'}
+            }
+        ],
+        fallback: true,
+    }
+}
+
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+    if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+
+-------------------------------
+Step1:
+Import
+---------
+import {useRouter} from 'next/router'
+---------
+for fallback page
+
+Step2:
+Add this code to get fallback page during fatching 
+the appropiate html and json code under function Post({post})
+
+---------
+const router = useRouter()
+if(router.isFallback){
+   return  <h1>Loding...</h1>
+}
+---------
+
+Step:3
+Add this code on getStaticProps(context) to get 404 page if we try to get not 
+relavent content
+---------
+if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+---------
+-----------------------------
+getStaticPaths fallback: 'blocking'
+-----------------------------
+1. The paths returned from getStaticPaths will rendered to HTML at build
+   time by getStaticProps.
+   =>Simply we pre-render all HTML pages at build time. we can see this
+     after 'yarn build'
+
+2. The paths that have not been generated at build time will not result in a 404
+   page. Instead, on the first request, Next.js will ender the page on the server 
+   and return the generated HTML.
+   => it will not give 404 page error and Also do not load any fallback UI,
+      It will ender the page on the server and return the generated HTML.
+
+3. When that's done, the browser receives the HTML for the generted path. From
+   the user's perspective, it will transition from "the browser is requesting the
+   page" to "the full page is loaded". There is no flash fo loading/fallback state.
+
+4. At the same time, Next.js keeps track of the new list of pre-rendered pages. 
+   Subsequent requests to the same path will serve the generated page, just like
+   other pages pre-rendered at build time.
+   
+   When to use
+------------
+1. On a UX level, sometimes, people prefer the page to be loaded without a loading
+   indecator if the wait time is a few milli seconds. This helps aoid the layout shift.
+
+2. Technically 'blocking' introduce because Some crawlers did not support JavaScript. 
+   so the loading page would be rendered and then the full page would be loaded which 
+   was causing a problame.
+
+BUT developer on next.js prefer to use fallback:true;
+
+CODE SETUP FOR fallback: 'blocking'
+-----------------------------
+[]pages
+  - []posts
+     - index.js
+  
+3 POST LIST on index.js (same as old)
+-------------------------------
+
+import Link from 'next/link'
+
+function PostList({posts}){
+    return(
+        <div>
+            <h1>List of Posts</h1>
+            {
+                posts.map(post =>{
+                    return(
+                        <div key={post.id}>
+                            <Link href={`posts/${post.id}`} passHref>
+                              <h2>{post.id}{post.title}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default PostList;
+
+export async function getStaticProps(){
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const data = await response.json()
+
+    return{
+        props:{
+            posts:data.slice(0,3)
+        }
+    }
+}
+
+-------------------------------
+
+[]pages
+  - []posts
+     - index.js
+     - [postId].js
+
+FULL CODE OF [postId].js (same as fallback:false just add 'blocking' insted of false)
+--------------------------------
+
+function Post({post}){
+    return(
+        <div>
+            <h2>{post.id} {post.title}</h2>
+            <p>{post.body}</p>
+        </div>
+    )
+}
+
+export default Post;
+
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {postId: '1'}
+            },
+            {
+                params: {postId: '2'}
+            },
+            {
+                params: {postId: '3'}
+            }
+        ],
+        fallback: 'blocking'
+    }
+}
+
+export async function getStaticProps(context){
+    const {params} = context
+    const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${params.postId}`
+        )
+    const data = await response.json()
+    if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+    return{
+        props:{
+            post:data,
+        },
+    }
+}
+
+
+
+===============================
+11. Static Generation & Issues
+===============================
+1. Static Generation is a method of pre-rendering where the HTML Pages
+   are generated a t build time.
+
+2. The pre-rendered static pages can be pushed to a CDN, cached and served to 
+   clients across the globe almost instantly.
+
+3. Static content is fast and better for SEO as they are immediately indexed by 
+   search engines
+
+4. Static generatin with getStaticProps for data fetching and getStaticPaths for
+   dynamic pages seems like a really good approch to a wide variety of applications
+   in production
+
+
+Issues
+-----------
+1. The build time is proportional to the number of pages in the application
+2. A page once generated can contain stale date till the time you rebuild the application
+
+
+Issue With Build Time:
+----------------------
+The build time is proportional to the number of pages in the application.
+Example:
+lets A page takes 100ms to build.
+1. if a basic E-commerce app with 100 products take 10 seconds to build.
+2. if a successful E-commerce app with 100,000 products takes >2.5 hours to build.
+   it's not just the time, there are cost inplications as well.
+
+
+Issue with stale data:
+Q. What if we build the app only once in a while?
+-----------------------
+Depending on the nature of your application, if E-commerce app is not an application
+which we build and deploy once in a while. Product details, especially product prices
+can vary everyday. 
+Example: In the time of sells lets price becomes 10,000 to 9,000 then we need to 
+re-build this app again, even for the small chane we need to re-build this app.
+Then it will be big problame.
+
+
+What about getStaticPaths?
+---------------------------
+In getStaticPaths we learn that using fallback:true|'blocking' we can pre-render 
+few pages at build time and remaining pages can be pre-rendered on request.
+
+Out of 10,000 pages
+It only possible if an E-commerce site which have 90% dynamci pages and 10% static
+pages because getStaticPaths() works only with dynamic pages.
+we are lucky that most of the E-commers site has 90% dynamic pages means we can
+use getStaticPaths() to solve this time issue on build time.
+
+But it can not solve the stale data, means if you render 1000 pages at build time
+and remaining pages are generated using fallback:true|'blocking' based on incoming request.
+Now if we want to  change the data in a Page which already requested, then data will not updated.
+
+===============================
+12. Incremental Static Regeneration(ISR)
+===============================
+Now there was a need to update only changed pages without rebuild the entire app.
+Using ISR, Next.js allows us to update static pages after we build our application.
+
+Features
+i.   A regeneration is done only if a user makes a request after the revalidate time.
+ii.  revalidate does not mean the page automatically regenerate every 10 second
+iii. If a user visit out our product details page but there is no other user hitting
+     the pgae the entire day, the re-generation does not happen.
+
+
+How?
+In the getStaticProps function, apart from the props key, we can specify 
+a 'revalidate' key.
+----------------------
+export async function getStaticProps() {
+  const res = await fetch('https://.../posts')
+  const posts = await res.json()
+
+  return {
+    props: {
+      posts,
+    },
+    revalidate: 10, // In seconds
+  }
+}
+----------------------
+i.   When a user request then pre-renderd page searved
+ii.  When a user request within 10 second then same cased pre-renderd page searved
+iii. When a user request after 10 second then Stale page searved  [stale of previous page] 
+     and Also Page Regeneration was triggered. When the page successfully generated then   
+     next.js invalidate this cached page and for any new request it searved updated page.
+     (if backgroun re-generaton faild then cached page searved)
+
+     So, Next.js searved Stale page while revalidation is happining in the background.
+
+
+    ***When we building an app where we can not affort to get Stale page after 10 second then
+       we use second form of pre-rendering that is Server Site Rendering.***
+
+
+===============================
+13. ISR example
+    i.  json-server
+    ii. creating Product folder
+===============================
+
+Here we use 'json-server' in place of 'JSON Placeholder' because 
+to see ISR example we need to change JSON data, which is not 
+Possibal using 'JSON Placeholder'.
+So, here we will install 'json-server' where we can change data
+as our want.
+
+---------------------
+i. json-server
+---------------------
+Step1:
+Install json-serve:
+npm install -g json-server
+
+Step2:
+In 'package.json' file add 'json-server' to install json-server.
+to do add:
+"json-server": "0.17.0", 
+under "dependencies"
+-------------------------------------
+
+ "dependencies": {
+    "json-server": "0.17.0",
+    "next": "12.1.5",
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  },
+
+-------------------------------------
+
+Step3:
+After this add a script 
+"serve-json": "json-server --watch db.json --port 4000"
+to serving list of products on localhost under port 4000
+-------------------------------------
+
+"scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+     "serve-json": "json-server --watch db.json --port 4000"
+  },
+
+-------------------------------------
+
+Step4:
+Under root we create 'db.json' for data and keep this code
+-------------------------------------
+
+{
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/products/
+http://localhost:4000/products/1
+
+Note:
+here we take 'products' because of  "products":[...] in step 3 
+
+---------------------
+ii. creating product folder
+---------------------
+for this example create product folder and under this we
+create 'index.js' & '[productId].js' file.
+
+[]pages
+  - []products
+      - index.js
+      - [productId].js
+
+
+
+index.js
+-------------------------------------
+
+import Link from 'next/link'
+
+function ProductList({products}){
+    return(
+        <div>
+            <h1>List of Posts 100</h1>
+            {
+                products.map(product =>{
+                    return(
+                        <div key={product.id}>
+                            <Link href={`products/${product.id}`} passHref>
+                              <h2>{product.id}{product.title} {product.price}</h2>
+                            </Link>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+export default ProductList;
+
+export async function getStaticProps(){
+    console.log('Generation / Regeneration')
+    const response = await fetch('http://localhost:4000/products/')
+    const data = await response.json()
+
+    return{
+        props:{
+            products:data
+        },
+        revalidate: 10, // In seconds
+    }
+}
+
+-------------------------------------
+
+
+[productId].js
+-------------------------------------
+
+import {useRouter} from 'next/router'
+
+function Product({product}){
+    const router = useRouter()
+
+    if(router.isFallback){
+        return  <h1>Loding...</h1>
+    }
+
+    return(
+        <div>
+            <h2>{product.id} {product.title} {product.price}</h2>
+            <p>{product.description}</p>
+        </div>
+    )
+}
+
+export default Product;
+
+export async function getStaticPaths(){
+    return {
+        paths: [
+            {
+                params: {productId: '1'}
+            }
+        ],
+        fallback: true,
+    }
+}
+
+export async function getStaticProps(context){
+    console.log('Generation / Regeneration')
+    const {params} = context
+    const response = await fetch(
+        `http://localhost:4000/products/${params.productId}`
+        )
+    const data = await response.json()
+    if(!data.id){
+        return{
+            notFound:true,
+        }
+    }
+    return{
+        props:{
+            product:data,
+        },
+        revalidate: 10, // In seconds
+    }
+}
+
+-------------------------------------
+
+yarn serve-json
+yarn build
+yarn start
+
+
+http://localhost:3000/products
+http://localhost:3000/products/1
+
+***When we building an app where we can not affort to get Stale page after 10 second then
+   we use second form of pre-rendering that is Server Site Rendering.***
+   
+   
+ ===============================
+14. Server-side Rendering (SSR)
+===============================
+i.  In SSR a page is not pre-render at build time but at request time.
+
+ii. SSR is a form of pre-rendering where the HTML is generated at request time.
+
+iii. *** In SSR the function will never run client-side, 
+     the code we write insite "getServerSideProps" not included in
+     the JS bundle that is sent to the browser. ***
+
+iv.  ** We can write server-side code directly in "getServerSideProps"
+
+v.   getServerSideProps is allowed only in a page and connot be run from a 
+     regualr component file.
+     
+vi.  It is used only for pre-rendering and not client-side data fetching.
+
+vii. getServerSideProps should return an object and object should contain a 
+     props key which is an object*
+
+viii. getServerSideProps will run at request time.
+
+
+When we need SSR?
+
+i. We should use getServerSideProps only if you need to render a page 
+   whose data must be fetched at request time. such as Authorization OR
+   for a News website where content is very dynamic menes news
+   articles published almost every second, then we can not affort to
+   have the stale data
+
+ii. Also SSR is required when we need to fetch personalized data keeping in mind SEO.
+
+*** keep in mind that Server-side Rendering (SSR) is slower than 
+    Static Site Generation, because getServerSiteProps runs only on the
+    server side and the HTML is generated on each request.
+    Therefore,
+    use Server-side Rendering only if absolutely necessary.
+
+
+===============================
+15. SSR example
+    i.  json-server
+    ii. creating news folder
+===============================
+Here we use 'json-server' in place of 'JSON Placeholder' because 
+to see SSR example.
+
+---------------------
+i. json-server
+---------------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+Under root we create 'db.json' for data and keep this code.
+here we add news object as data
+-------------------------------------
+
+{
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 1",
+            "description": "Description 1",
+            "catigory": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 2",
+            "description": "Description 2",
+            "catigory": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 3",
+            "description": "Description 3",
+            "catigory": "sports"
+        }
+    ],
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/news/
+http://localhost:4000/news/1
+
+
+---------------------
+ii. creating news folder
+---------------------
+for this example create news folder and under this we
+create 'index.js'
+
+[]pages
+  - []news
+      - index.js
+      
+
+index.js
+-------------------------------------
+
+function NewsArticleList({articles}){
+    return(
+        <div>
+            <h1>List of News Articles</h1>
+            {
+                articles.map(article =>{
+                    return(
+                        <div key={article.id}>
+                            <h2>{article.id} {article.title} | {article.category}</h2>
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default NewsArticleList;
+
+
+// This gets called on every request
+export async function getServerSideProps() {
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/news`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+            articles: data,
+        } 
+    }
+  }
+  
+  
+-------------------------------------
+Note:
+**Here we use "getServerSideProps()" 
+
+
+===============================
+16. SSR example 2
+    I.  Post List
+    II. Single Post (Using Id)
+===============================
+First setup the json-server
+---------------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+Under root we create 'db.json' for data and keep this code.
+here we add news object as data
+-------------------------------------
+
+{
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 1",
+            "description": "Description 1",
+            "catigory": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 2",
+            "description": "Description 2",
+            "catigory": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 3",
+            "description": "Description 3",
+            "catigory": "sports"
+        }
+    ]
+}
+
+-------------------------------------
+
+Finally to run this use
+yarn serve-json
+
+URL for data is
+http://localhost:4000/news/
+http://localhost:4000/news/1
+
+
+-------------------
+SSR example
+   I.  Post List
+-----------------
+for this example create news folder and under this we
+create 'index.js' & [newsId].js
+
+[]pages
+  - []news
+      - index.js
+      - [newsId].js
+
+
+
+CODE OF
+index.js
+-------------------------------------
+
+import Link from "next/link";
+
+function NewsList({newsList}){
+  return(
+    <div>
+        <h1>News List</h1>
+        {
+            newsList.map(news=>{
+                return(
+                    <div key={news.id}>
+                        <Link href={`/news/${news.id}`} passHref>
+                          <a><h3>{news.id} {news.title} | {news.category}</h3></a>
+                        </Link>
+                        <p>{news.description}</p>
+                    </div>
+                )
+            })
+        }
+    </div>
+  )
+}
+export default NewsList
+
+export async function getServerSideProps(){
+    const response = await fetch('http://localhost:4000/news');
+    const data = await response.json();
+    return{
+        props:{
+            newsList:data
+        }
+    }
+}
+
+-------------------------------------
+CODE OF
+[newsId].js
+-------------------------------------
+
+function SingleNews({data}){
+    return(
+        <div>
+             <h1>{data.id} {data.title} | {data.category}</h1>
+             <p>{data.description}</p>
+        </div>
+    )
+}
+export default SingleNews;
+
+export async function getServerSideProps(context){
+    const {params} = context
+    const response = await fetch(`http://localhost:4000/news/${params.newsId}`)
+    const data = await response.json()
+    //console.log(data)
+    //if data not fount go 404 page
+    if (!data.id) {
+       return {
+        notFound: true,
+       }
+    }
+
+    return {
+    props: { data }, // will be passed to the page component as props
+    }
+}
+
+-------------------------------------
+*** Note:My coding ***
+-------------------------------------
+
+
+===============================
+17. SSR with dynamic parameter
+===============================
+Now we get News details 
+create new page called [category].js under []news
+
+[]pages
+  - []news
+      - index.js
+      - [category].js
+
+
+
+[category].js
+-------------------------------------
+
+function ArticleListByCategory({articles , category}){
+    return(
+        <div>
+            <h1>Showing new for category {category}</h1>
+            {
+                articles.map(article =>{
+                    return(
+                        <div key={article.id}>
+                            <h2>{article.id} {article.title}</h2>
+                            <p>{article.description}</p>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default ArticleListByCategory
+
+// This gets called on every request
+export async function getServerSideProps(context) {
+    const {params} = context
+    const {category} = params
+    const response = await fetch(`http://localhost:4000/news?category=${category}`)
+    const data = await response.json()
+    return { 
+        props: { 
+            articles: data,
+            category,
+        } 
+    }
+  }
+
+-------------------------------------
+yarn serve-josn
+yarn build
+yarn start
+
+http://localhost:3000/news/sports
+http://localhost:3000/news/politics
+
+===============================
+18. Client-side Data Fetching
+===============================
+We might not always need to pre-render the data.
+Example: 
+For User Dashboard page, where 
+i.  it is private and is behind the login screen.
+ii. Also which is highly user-specifig and SEO is not relevant
+There we no need to pre-render the data.
+
+-------------
+json-server
+-------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+here we add dashboard data
+-------------------------------------
+
+{
+    "dashboard":{
+            "posts":5,
+            "likes":100,
+            "followers":20,
+            "following":50
+        },
+    
+    
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 101",
+            "description": "Description 1",
+            "category": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 202",
+            "description": "Description 2",
+            "category": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 303",
+            "description": "Description 3",
+            "category": "sports"
+        }
+    ],
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+
+-------------------------------------
+
+Now Create 'dashboard.js' under []pages folder.
+
+[]pages
+  - dashboard.js
+
+-------------------------------------
+
+import {useState, useEffect} from 'react'
+
+function Dashboard(){
+    const [isLoading, setIsLoding] = useState(true)
+    const [dashboardData, setDashboardData] = useState(null)
+
+    useEffect(() =>{
+        async function fetchDashboardData(){
+            const response = await fetch(`http://localhost:4000/dashboard`)
+            const data = await response.json()
+            setDashboardData(data)
+            setIsLoding(false)
+        }
+        fetchDashboardData()
+    }, [])
+    if(isLoading){
+        return <h2>Loding...</h2>
+    }
+    return(
+        <div>
+            <h2>Dashboard</h2>
+            <h2>Posts - {dashboardData.posts}</h2>
+            <h2>Likes - {dashboardData.likes}</h2>
+            <h2>Followers - {dashboardData.followers}</h2>
+            <h2>Following - {dashboardData.following}</h2>
+            <h2></h2>
+        </div>
+    )
+}
+
+export default Dashboard
+
+
+-------------------------------------
+
+yarn serve-json
+yarn dev
+
+http://localhost:3000/dashboard
+
+
+===============================
+19. Client-side Data Fetching using SWR (basic)
+===============================
+
+SWR is React Hook libary for Data fetching.
+
+STEP:1
+Install SWR package using:
+--------------
+yarn add swr
+--------------
+
+STEP:2
+create new file called 'dashboard-swr.js'
+under []pages folder
+
+-------------------------------------
+
+import useSWR from 'swr'
+
+const fetcher = async()=>{
+    const response = await fetch(`http://localhost:4000/dashboard`)
+    const data = await response.json()
+    return data
+}
+
+function DashboardSWR(){
+    const {data, error} = useSWR('dashboard', fetcher)
+    if(error) return 'An error has occured'
+    if(!data) return 'Loding'
+    return(
+        <div>
+            <h2>Dashboard</h2>
+            <h2>Posts - {data.posts}</h2>
+            <h2>Likes - {data.likes}</h2>
+            <h2>Followers - {data.followers}</h2>
+            <h2>Following - {data.following}</h2>
+            <h2></h2>
+        </div>
+    )
+}
+
+export default DashboardSWR
+
+-------------------------------------
+
+yarn serve-josn
+yarn dev
+
+http://localhost:3000/dashboard-swr
+
+Note: SWR is the best way to fetch data.
+      With out any load it can fetch data
+
+
+
+===============================
+20. Pre-rendering + Client Side Data Fetching.
+===============================
+Here we lean how to Pre-render a page using SSR with 
+Client Side Data Fetching.
+
+To do this we take a Event Listing Page where:
+i.   A page shows that a list of events happening arout me.
+     To maintain SEO and Request time, we use SSR with 'getServerSideProps'
+
+ii.  After loding above thing we use Client Side Data fetching for filtering
+     events.
+     (Note: Ideally, both pagination and filtering would take place client side but,
+      for this example, we are only going to focus on filtering)
+
+
+
+STEP:1
+-------------
+json-server
+-------------
+Step1: same as previous if need
+Step2: same as previous if need
+Step3: same as previous if need
+Step4:
+here we add 10 events data
+
+-------------------------------------
+
+
+{
+    "events":[
+        {
+            "id": 1,
+            "title": "Event 1",
+            "description": "Description 1",
+            "category": "sports",
+            "date": "April 25"
+        },
+        {
+            "id": 2,
+            "title": "Event 2",
+            "description": "Description 2",
+            "category": "technology",
+            "date": "April 25"
+        },
+        {
+            "id": 3,
+            "title": "Event 3",
+            "description": "Description 3",
+            "category": "food",
+            "date": "April 25"
+        }
+
+    ],
+    
+    
+    "dashboard":{
+            "posts":5,
+            "likes":150,
+            "followers":20,
+            "following":50
+        },
+    
+    
+    "news":[
+        {
+            "id": 1,
+            "title": "News Article 101",
+            "description": "Description 1",
+            "category": "sports"
+        },
+        {
+            "id": 2,
+            "title": "News Article 202",
+            "description": "Description 2",
+            "category": "politics"
+        },
+        {
+            "id": 3,
+            "title": "News Article 303",
+            "description": "Description 3",
+            "category": "sports"
+        }
+    ],
+    "products":[
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 1000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 1500,
+            "description": "Description 1"
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 3000,
+            "description": "Description 1"
+        }
+    ]
+}
+
+-------------------------------------
+
+STEP:2
+Creating a page called 'events.js' under []pages folder
+Here we display list of events, 
+And here we know all steps
+
+events.js
+-------------------------------------
+
+function EventList({eventList}){
+    return(
+        <div>
+            <h1>List Of Events</h1>
+            {
+                eventList.map(event =>{
+                    return(
+                        <div key={event.id}>
+                            <h2>{event.id} {event.title} {event.data} | {event.category}</h2>
+                            <p>{event.description}</p>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default EventList
+
+export async function getServerSideProps() {
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/events`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+           eventList: data,
+        } 
+    }
+  }
+
+-------------------------------------
+
+STEP:3
+i. Now we will call a sports filter button 
+------------
+<button onClick={fetchSportsEvents}>Sports</button>
+<h1>List Of Events</h1>
+-----------
+
+ii. Delcear this function
+-----------
+const fetchSportsEvents = async() =>{
+     const response = await fetch(`http://localhost:4000/events?category=sports`)
+     const data = await response.json()     
+}
+-----------
+
+iii. Now we use 'useState' to set this event data
+-----------
+import {useState} from 'react'
+
+function EventList({eventList}){
+    const[events, setEvents] = useState(eventList)
+
+    const fetchSportsEvents = async() =>{
+        const response = await fetch(`http://localhost:4000/events?category=sports`)
+        const data = await response.json()
+        setEvents(data)
+    }
+    
+    retun(
+       ...
+    )
+}
+-----------
+
+iv. Finally we replace 'eventList' to 'events' in 
+    during map
+
+----------
+events.map(event =>{
+----------
+
+CODE
+-------------------------------------
+
+import {useState} from 'react'
+
+function EventList({eventList}){
+    const[events, setEvents] = useState(eventList)
+
+    const fetchSportsEvents = async() =>{
+        const response = await fetch(`http://localhost:4000/events?category=sports`)
+        const data = await response.json()
+        setEvents(data)
+    }
+    
+    return(
+        <div>
+            <button onClick={fetchSportsEvents}>Sports</button>
+            <h1>List Of Events</h1>
+            {
+                events.map(event =>{
+                    return(
+                        <div key={event.id}>
+                            <h2>{event.id} {event.title} {event.data} | {event.category}</h2>
+                            <p>{event.description}</p>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default EventList
+
+export async function getServerSideProps() {
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/events`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+           eventList: data,
+        } 
+    }
+  }
+
+-------------------------------------
+
+Up to this we can filter our code accourding to our sports category.
+but we can not book marke this filter because url did not changed.
+Now we need to change URL accourdig to our filter.
+
+Step4:
+i. use router
+--------------
+import {useRouter} from 'next/router'
+--------------
+
+
+ii. call useRouter under the Compenent 'EventList({eventList}){...}'
+--------------
+function EventList({eventList}){
+    const[events, setEvents] = useState(eventList)
+    const router = useRouter() //-------------- calling useRouter
+
+    const fetchSportsEvents = async() =>{
+        const response = await fetch(`http://localhost:4000/events?category=sports`)
+        const data = await response.json()
+        setEvents(data)
+        router.push('/events?category=sports', undefined, {shallow: true}) //------------ router pushi
+    }
+
+    return(
+        ...
+    )
+}
+--------------
+
+iii. Also update on getServerSideProps() {...}
+     using context
+--------------
+export async function getServerSideProps(context) {
+    const {query} = context
+    const {category} = query
+    const queryString = category ? 'category=sports' : ''
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/events?${queryString}`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+           eventList: data,
+        } 
+    }
+  }
+
+--------------
+
+Full Code
+events.js
+-------------------------------------
+
+import {useState} from 'react'
+import {useRouter} from 'next/router'
+
+function EventList({eventList}){
+    const[events, setEvents] = useState(eventList)
+    const router = useRouter()
+
+    const fetchSportsEvents = async() =>{
+        const response = await fetch(`http://localhost:4000/events?category=sports`)
+        const data = await response.json()
+        setEvents(data)
+        router.push('/events?category=sports', undefined, {shallow: true})
+    }
+
+    return(
+        <div>
+            <button onClick={fetchSportsEvents}>Sports</button>
+            <h1>List Of Events</h1>
+            {
+                events.map(event =>{
+                    return(
+                        <div key={event.id}>
+                            <h2>{event.id} {event.title} {event.data} | {event.category}</h2>
+                            <p>{event.description}</p>
+                            <hr />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+export default EventList
+
+export async function getServerSideProps(context) {
+    const {query} = context
+    const {category} = query
+    const queryString = category ? 'category=sports' : ''
+    // Fetch data from external API
+    const response = await fetch(`http://localhost:4000/events?${queryString}`)
+    const data = await response.json()
+  
+    // Pass data to the page via props
+    return { 
+        props: { 
+           eventList: data,
+        } 
+    }
+  }
+
+-------------------------------------
+
+
+
+===============================
+21. Summery of Pre-rendering & Data Fetching
+===============================
+1. Pre-rendering refers to the Pre-geneartion of HTML in advance 
+   which result in better performance and SEO.
+
+2. Next Js supports two forms of Pre-rendering
+   i.  Static Generation
+   ii. Server-side Rendering (SSR)
+
+3. Static Generation:
+   i.   In this method HTML pages are generated at build time.
+   ii.  Pages can be build once, cached by a CDN and served to clients almost instantaly
+   iii. Static Generaton is most recommended among two types of Pre-rendering.
+   iv.  Example: 
+        I.   Marketing Or Blog site
+        II.  For a normal page, use 'getStaticProps' function to fetch the data ahead of time
+        III. For a dynamic page, we use 'getStaticPath' function to know the possibal values for
+             the dynamic parameter to pre-render those pages.
+    
+   v.   fallback:false | true | 'blocking'
+   vi.  Main disadvantage of Static Generation is cannot be update without a full re-build.
+   vii. Icremental Static Regeneration (ISR)
+
+4. Server-side Rendering (SSR):
+   i.   SSR Fetch data at request time
+   ii.  Personalize data based on user information in the incoming request
+   iii. Example:
+        I.  News listing page
+   iv.  'getServerSideProps' function helps with SSR data Fetching.
+
+5. Combining Pre-rendering with Client side data fetching
+
+6. Shallow routing - Routing without calling getStaticProps/getServerSideProps
+
+*** Pre-rendering & Data Fetching are most important pillers of Next.js
+
+
+
+
+
+
+
+
+
+
+

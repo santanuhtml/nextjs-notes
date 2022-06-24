@@ -1,0 +1,21 @@
+----------------------------
+Next JS Core Features
+----------------------------
+1. Routing
+2. Pre-rendering
+3. API Routes
+4. Styling
+
+
+----------------------------
+Next JS Miscellaneous Features
+----------------------------
+1. App Layout
+2. Head Component
+3. Image Component
+4. Absolute Imports and Module Paths
+5. Configure TypeScript Support
+6. Preview
+7. Next Config File
+8. Redirects
+9. Environment Variables
