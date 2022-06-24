@@ -19,3 +19,6 @@ Next JS Miscellaneous Features
 7. Next Config File
 8. Redirects
 9. Environment Variables
+
+
+
