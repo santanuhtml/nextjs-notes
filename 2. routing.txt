@@ -320,11 +320,12 @@ import {useRouter}  from 'next/router'
 function ProductDetails(){
     //useRouter()   calling this hook
     const router = useRouter()
-    const productId = router.query.productId
-    // const {productId} = router.query
+    const xyz = router.query.productId
+   
     return(
         <div>
-            <h1>Product Details of {productId} </h1>
+            <h1>Product Details of {xyz}</h1>
+            <p>OR we can add direct {router.query.productId} </p>
         </div>
     )
 }
