@@ -452,6 +452,67 @@ Note:
 src={`/${path}.jpg`} because 'public' folder treated as 
 root directory.
 
+Example:
+
+
+-------------------------------
+<div className="container">
+  <div className="row">
+  {
+    ['1','2','3','4','5','6'].map(path=>{
+      return(
+        <div className="col-md-4" key={path}>
+          <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+            <Image 
+                alt="pet images" 
+                src={`/${path}.jpg`} 
+                layout="fill" 
+                objectFit="cover" />
+            </div>
+          </div>
+          )
+      })
+    }
+    
+
+    {
+      ['1','2','3','4','5','6'].map(path=>{
+        return(
+          <div className="col-md-4" key={path}>
+            <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+              <Image
+                alt="pet images"
+                src={`/${path}.jpg`} 
+                layout="fill"
+                objectFit="contain"/>
+            </div>
+          </div>
+        )
+      })
+    }
+
+
+    {
+      ['1','2','3','4','5','6'].map(path=>{
+        return(
+          <div className="col-md-4" key={path}>
+            <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+              <Image
+                alt="pet images"
+                src={`/${path}.jpg`} 
+                layout="fill"
+                objectFit="none"
+                quality={100}/>
+            </div>
+          </div>
+        )
+      })
+    }
+  </div>
+</div>
+-------------------------------
+
+
 --------------
 Advantages of <Image /> Component
 --------------
