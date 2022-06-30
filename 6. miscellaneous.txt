@@ -452,9 +452,8 @@ Note:
 src={`/${path}.jpg`} because 'public' folder treated as 
 root directory.
 
-Example:
-
-
+Example:01
+Basic Demo
 -------------------------------
 <div className="container">
   <div className="row">
@@ -511,7 +510,22 @@ Example:
   </div>
 </div>
 -------------------------------
+Example:02
+If Image with class then to use <Image/> component with
+class use <span> which contain class properties.
+Note: <Image/> component only teke width and height
+-------------------------------
 
+<span style={{ marginRight: 5, marginBottom: 5 }}>
+  <Image 
+    src="/img/checked.png"
+    width={16}
+    height={16}
+    alt="Checked icon" 
+  />
+</span>
+              
+-------------------------------
 
 --------------
 Advantages of <Image /> Component
