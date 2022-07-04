@@ -227,6 +227,34 @@ function CSSJS(){
 export default CSSJS;
 
 -------------------------------
+TYPE:2
+-------------------------------
+
+function Corporate(){
+  return(
+    <div>
+      <a href="#" className="btn btn-primary btn-lg">
+         Download Corporate Brochure
+      </a>
+      <style jsx>{`
+        .btn-primary {
+          background-color: #d91414;
+          border-color: #d91414;
+          border-radius: 0px;
+        }
+        .btn-primary:hover {
+          background-color: #c01313;
+          border-color: #d91414;
+        }
+      `}</style>
+    </div>
+  )
+}
+export default Corporate;
+      
+-------------------------------      
+
+
 
 -----------------
 TYPE:2
