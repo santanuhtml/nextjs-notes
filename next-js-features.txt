@@ -1,8 +1,7 @@
 NEXT JS FEATURES
 -----------------------
 1. AOS Animation
-
-
+2. After Scroll Navbar Fixed Top
 
 =======================
 1. AOS Animation
@@ -32,3 +31,27 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp;
+
+
+=======================
+2. After Scroll Navbar Fixed Top
+=======================
+Under _document.js call the script
+-----------------------
+<script src="js/main.js"></script>
+-----------------------
+
+And code of main.js
+-----------------------
+
+$(window).on('scroll',function(){
+  var wscroll = $(this).scrollTop();
+  if(wscroll > 20){
+   $(".navbar").addClass("navbar-fixed-top");
+  }
+  else{
+    $(".navbar").removeClass("navbar-fixed-top");
+  }
+});
+
+-----------------------
