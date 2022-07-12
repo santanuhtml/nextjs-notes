@@ -414,17 +414,83 @@ export async function getStaticProps(context){
 ===============================
 We store images in []public folder in our root directory.
 
-Lets keep 5 pet images with name 1.jpg,2.jpg,...,5.jpg
-Now we will diplay those 5 images in 'pet.js' page
+--------------------------
+TYPE:1
+For static images
+--------------------------
 
-[]pages
-  - index.js
-  - pet.js
+import Image from "next/image"
+import BannerImage from '../public/img/industry-Emission.jpg'
 
-CODE OF
-pet.js
--------------------------------
+function Images(){
+  return(
+    <div>
+      <Image src={BannerImage} />
+      <img src="img/industry-Emission.jpg" />
+    </div>
+  )
+}
+export default Images
 
+--------------------------
+TYPE:2
+For Dynamic Image when 
+size is unknown
+objectFit = "contain|cover|none"
+--------------------------
+
+import Image from "next/image"
+
+function Images(){
+  return(
+    <div>
+      <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+        <Image src='/img/industry-Emission.jpg' layout='fill' objectFit="contain" />
+      </div>
+    </div>
+  )
+}
+export default Images
+
+--------------------------
+TYPE:3
+Above the Fold Content
+to load fast use priority
+--------------------------
+
+import Image from "next/image"
+import BannerImage from '../public/img/industry-Emission.jpg'
+
+function Images(){
+  return(
+    <div>
+      <Image priority src={BannerImage} />
+      <img src="img/industry-Emission.jpg" />
+    </div>
+  )
+}
+export default Images
+
+--------------------------
+TYPE:4
+If Image with class then to use <Image/> component with
+class use <span> which contain class properties.
+Note: <Image/> component only teke width and height
+--------------------------
+
+<span style={{ marginRight: 5, marginBottom: 5 }}>
+  <Image 
+    src="/img/checked.png"
+    width={16}
+    height={16}
+    alt="Checked icon" 
+  />
+</span>
+
+--------------------------
+TYPE:5
+To call list of images 
+--------------------------
 import Image from "next/image";
 
 function Pets(){
@@ -444,88 +510,10 @@ function Pets(){
     )
 }
 export default Pets;
-
--------------------------------
-http://localhost:3000/pets
-
+--------------------------
 Note:
 src={`/${path}.jpg`} because 'public' folder treated as 
 root directory.
-
-Example:01
-Basic Demo
--------------------------------
-<div className="container">
-  <div className="row">
-  {
-    ['1','2','3','4','5','6'].map(path=>{
-      return(
-        <div className="col-md-4" key={path}>
-          <div style={{ position: 'relative', width: '100%', height: '300px' }}>
-            <Image 
-                alt="pet images" 
-                src={`/${path}.jpg`} 
-                layout="fill" 
-                objectFit="cover" />
-            </div>
-          </div>
-          )
-      })
-    }
-    
-
-    {
-      ['1','2','3','4','5','6'].map(path=>{
-        return(
-          <div className="col-md-4" key={path}>
-            <div style={{ position: 'relative', width: '100%', height: '300px' }}>
-              <Image
-                alt="pet images"
-                src={`/${path}.jpg`} 
-                layout="fill"
-                objectFit="contain"/>
-            </div>
-          </div>
-        )
-      })
-    }
-
-
-    {
-      ['1','2','3','4','5','6'].map(path=>{
-        return(
-          <div className="col-md-4" key={path}>
-            <div style={{ position: 'relative', width: '100%', height: '300px' }}>
-              <Image
-                alt="pet images"
-                src={`/${path}.jpg`} 
-                layout="fill"
-                objectFit="none"
-                quality={100}/>
-            </div>
-          </div>
-        )
-      })
-    }
-  </div>
-</div>
--------------------------------
-Example:02
-If Image with class then to use <Image/> component with
-class use <span> which contain class properties.
-Note: <Image/> component only teke width and height
--------------------------------
-
-<span style={{ marginRight: 5, marginBottom: 5 }}>
-  <Image 
-    src="/img/checked.png"
-    width={16}
-    height={16}
-    alt="Checked icon" 
-  />
-</span>
-              
--------------------------------
 
 --------------
 Advantages of <Image /> Component
