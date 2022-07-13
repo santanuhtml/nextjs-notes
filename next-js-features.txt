@@ -4,6 +4,7 @@ NEXT JS FEATURES
 2. After Scroll Navbar Fixed Top
 3. owl-carousel
 4. React Slick
+5. Multi-Level Dropdown Menu
 
 =======================
 1. AOS Animation
@@ -263,4 +264,22 @@ function Test(){
 }
 export default Test;
 
+
+=======================
+5. Multi-Level Dropdown Menu
+=======================
+Code of main.js
 --------------------------
+  $('.navbar a.dropdown-toggle').on('click', function(e) {
+      var $el = $(this);
+      var $parent = $(this).offsetParent(".dropdown-menu");
+      $(this).parent("li").toggleClass('open');
+      if(!$parent.parent().hasClass('nav')) {
+          $el.next().css({"top": $el[0].offsetTop, "left": $parent.outerWidth() - 4});
+      }
+      $('.nav li.open').not($(this).parents("li")).removeClass("open");
+      return false;
+  });
+--------------------------
+
+
