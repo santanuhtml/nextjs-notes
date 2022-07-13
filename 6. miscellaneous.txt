@@ -2,6 +2,7 @@
 Next JS Miscellaneous Features
 --------------------------------------
 1. App Layout
+   - Layouts
 2. Head Component
 3. Image Component
 4. Absolute Imports & Module Paths
@@ -189,6 +190,87 @@ CODE OF layout.css
 http://localhost:3000/about
 
 
+===============================
+1. App Layout
+   - Layouts
+===============================
+I. Single Shared Layout
+-------------------------------
+For single shared layout we add header and footer 
+in our _app.js page
+Code of _app.js
+-------------------------------
+
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+
+import '../styles/layout.css'
+
+function MyApp({ Component, pageProps }) {
+  
+  return(
+    <div>
+      <Header />
+      <Component {...pageProps} />
+      <Footer />
+    </div>
+  )
+}
+
+export default MyApp
+
+-------------------------------
+II. Single Shared Layout
+-------------------------------
+If you need multiple layouts we add header and footer 
+in our pages
+
+Code ofindex.js
+-------------------------------
+
+import Header from '../componenet/Header'
+import Footer from '../componenet/Footer'
+
+function Home(){
+  return(
+    <>
+      <h1>Home Page</h1>
+    </>
+
+  )
+}
+export default Home;
+
+Home.getLayout = function pageLayout(page){
+  return(
+    <div>
+      <Header />
+      {page}
+      <Footer />
+    </div>
+  )
+}
+
+-------------------------------
+Code of _app.js
+-------------------------------
+
+import '../styles/globals.css'
+import Header from '../componenet/Header'
+import Footer from '../componenet/Footer'
+
+function MyApp({ Component, pageProps }) {
+ 
+  const getLayout = Component.getLayout || ((page) => page)
+
+  return getLayout(<Component {...pageProps} />)
+}
+
+export default MyApp
+
+-------------------------------
+Second Way
+-------------------------------
 *** In some page we don't need Same Header & Footer section. ***
     Called Per-page Layout
 
