@@ -5,6 +5,7 @@ NEXT JS FEATURES
 3. owl-carousel
 4. React Slick
 5. Multi-Level Dropdown Menu
+6. React Scroll Parallax
 
 =======================
 1. AOS Animation
@@ -282,4 +283,75 @@ Code of main.js
   });
 --------------------------
 
+=======================
+6. React Scroll Parallax
+=======================
+React Scroll Parallax
+Source: https://react-scroll-parallax.damnthat.tv/docs/usage/
 
+Step:1
+Install
+-------------------------------
+yarn add react-scroll-parallax
+-------------------------------
+
+Step:2
+Under _app.js file call
+-------------------------------
+import { ParallaxBanner } from 'react-scroll-parallax';
+-------------------------------
+
+Step:3
+And wrap the getLayout with <ParallaxProvider>
+-------------------------------
+return (
+    <div>
+      <ParallaxProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </ParallaxProvider>
+    </div>
+  ) 
+-------------------------------
+
+
+Step:4
+Here we creting a basic parallax banner
+Create a component or page called parallax.js
+-------------------------------
+
+import { ParallaxBanner } from 'react-scroll-parallax';
+
+function Parallax(){
+  return(
+    <div>
+      <div style={{ height: 100 }} />
+      <ParallaxBanner 
+        layers={[
+          {
+            image: 'img/banner1.webp',
+            speed: -20,
+          },
+        ]}
+        style={{height: 250 }}
+        className="banner"
+      >
+        <div style={{
+          fontWeight: 400,
+          position: "absolute",
+          width: "100%",
+          top: "50%",
+          left: "50%",
+          WebkitTransform: "translate(-50%, -40%)",
+          msTransform: "translate(-50%, -40%)",
+          transform: "translate(-50%, -40%)"
+        }}>
+          <h1>Parallax</h1>
+        </div>
+      </ParallaxBanner>
+      <div style={{ height: 2000 }} />
+    </div>
+  )
+}
+export default Parallax;
+
+-------------------------------
