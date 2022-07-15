@@ -256,16 +256,11 @@ Code of _app.js
 -------------------------------
 
 import '../styles/globals.css'
-import Header from '../componenet/Header'
-import Footer from '../componenet/Footer'
 
 function MyApp({ Component, pageProps }) {
- 
   const getLayout = Component.getLayout || ((page) => page)
-
   return getLayout(<Component {...pageProps} />)
 }
-
 export default MyApp
 
 -------------------------------
