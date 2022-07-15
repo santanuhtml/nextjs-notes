@@ -220,7 +220,7 @@ function MyApp({ Component, pageProps }) {
 export default MyApp
 
 -------------------------------
-II. Single Shared Layout
+II. Per-Page Layouts
 -------------------------------
 If you need multiple layouts we add header and footer 
 in our pages
