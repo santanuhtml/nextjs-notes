@@ -298,7 +298,7 @@ yarn add react-scroll-parallax
 Step:2
 Under _app.js file call
 -------------------------------
-import { ParallaxBanner } from 'react-scroll-parallax';
+import { ParallaxProvider } from 'react-scroll-parallax';
 -------------------------------
 
 Step:3
